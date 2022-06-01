@@ -1,18 +1,26 @@
+/** [Bullet.java]
+  * ICS4U1-02
+  * @Richard Yang
+  * @Ryan Zareh
+  * @version 1.0
+  * June 2022
+  */
+
 import java.awt.Graphics;
 import java.awt.Color;
 
 public abstract class Bullet{
   
-  private double speed;
-  private double damage;
-  private double size;
-  private Color bulletColor;
   private double x;
   private double y;
   private double velocityx;
   private double velocityy;
   private double accelerationx;
   private double accelerationy;
+  private double speed;
+  private double damage;
+  private double size;
+  private Color bulletColor;
   private int pierceCount;
   private int bounceCount;
   private double bounceModifier;
