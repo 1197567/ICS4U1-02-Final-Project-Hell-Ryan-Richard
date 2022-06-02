@@ -10,6 +10,12 @@ public abstract class Enemy{
   
   public abstract void movement();
   
+  public void fireBullet(){
+  }
+  
+  public void takeDamage(){
+  }
+  
   public void death(){
   }
 }
