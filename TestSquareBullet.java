@@ -9,16 +9,11 @@
 //import statements
 //this is the same thing as testBullet but with a different shape go read that for comments
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList; 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 public class TestSquareBullet extends Bullet{
-    
-    boolean testSquare = false;
-    Rectangle testingSquare;
-    
     /*
     * constructor of bullet
     * @param x - x position
@@ -38,23 +33,40 @@ public class TestSquareBullet extends Bullet{
     * @param disappearDistance - distance bullet travels before disappearing
     */
     public TestSquareBullet(ArrayList<Bullet> bulletList) {
-        super(100, 100, 10, 7, 0, 
+        super(100, 100, 8, 10, 0, 
         0, 1, 20, 40, Color.RED, 0, 
         999, 1, false, 0, 
-        bulletList, new Rectangle(100, 100, 20, 40), 0);
+        bulletList, new Rectangle(90, 80, 20, 40), 
+        "resources/TestSquareBulletImageTest.png");
     }
     
     
+    /*
+    * collisionWithWall
+    * method responsible for detecting collision between this bullet and a wall 
+    * @param wallHitBox - initial rectangle object from wall used for collisions
+    * @param hitBoxArray - the array of hitBoxes from rectangles from the room
+    */
     public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray) {
+        //the first two lines are for testing
         testingSquare = wallHitBox;
         testSquare = true;
-        if (hitBox.intersects(wallHitBox)) {
-            if (bounceCount <= 0) {
+        if (hitBox.intersects(wallHitBox)) { //tests if the two hitboxes really intercept
+            if (bounceCount <= 0) { //deletes the bullet if it has no bounces
                 bulletDisappear();
+                //print statement for testing purposes
                 System.out.println("EXHAUSTED BOUNCES ON TESTBULLET");
             } else {
-                bounceCount--;                
-                double velocityBackX;
+                bounceCount--;         
+                //to "bounce" the bullet the method does these steps
+                //1. go backwards in small increments until outside of the wall hitbox
+                //2. check to see if it's still inside a box after that and repeat step 1
+                //3. if the wall it was last in has walls next to it, bounce off perpendicularly
+                //to them as you can't bounce off a wall in a direction which already has walls in it
+                //4. if the wall does not have walls beside it, increment once in each direction to 
+                //determine which axis is closest to the wall and use that to determine the direction
+                //the bullet will bounce off and change the velocity accordingly
+                double velocityBackX; //velocityBack is the incremental velocity for going backwards
                 double velocityBackY;
                 int backUpCount = 0;
                 AffineTransform backTranslate = new AffineTransform();
@@ -63,7 +75,9 @@ public class TestSquareBullet extends Bullet{
                 boolean notBesideOtherWall = true;
                 int[] wallCoordinates = new int[]{(int) wallHitBox.getX()/50, (int) wallHitBox.getY()/50};
                 do {
-                    wallCollided.add(wallHitBox);
+                    //wallCollided ensures that the bullet doesn't 
+                    //immediately collide again after bouncing
+                    wallCollided.add(wallHitBox); 
                     if (Math.abs(velocityX) > Math.abs(velocityY)) {
                         velocityBackX = (-velocityX)/Math.abs(velocityX);
                         velocityBackY = (-velocityY)/Math.abs(velocityX);
@@ -94,24 +108,22 @@ public class TestSquareBullet extends Bullet{
                         }
                     }
                 } while (inWall);
-                if ((wallCoordinates[0] - 1 > 0) && 
+                //the following large chunk of code is to determine if 
+                //the wall has one beside it
+                if (((wallCoordinates[0] - 1 > 0) && 
                 (hitBoxArray[wallCoordinates[0] - 1][wallCoordinates[1]] != null) &&
-                (wallHitBox.getX() + wallHitBox.getWidth()/2 >= points[0][0] + sizeX/2)) {
-                    velocityY = -velocityY*bounceModifier;
-                    notBesideOtherWall = false;
-                } else if ((wallCoordinates[0] + 1 < hitBoxArray.length) && 
+                (wallHitBox.getX() + wallHitBox.getWidth()/2 >= points[0][0] + sizeX/2)) ||
+                ((wallCoordinates[0] + 1 < hitBoxArray.length) && 
                 (hitBoxArray[wallCoordinates[0] + 1][wallCoordinates[1]] != null) &&
-                (wallHitBox.getX() + wallHitBox.getWidth()/2 < points[0][0] + sizeX/2)) {
+                (wallHitBox.getX() + wallHitBox.getWidth()/2 < points[0][0] + sizeX/2))) {
                     velocityY = -velocityY*bounceModifier;
                     notBesideOtherWall = false;
-                } else if ((wallCoordinates[1] - 1 > 0) && 
+                } else if (((wallCoordinates[1] - 1 > 0) && 
                 (hitBoxArray[wallCoordinates[0]][wallCoordinates[1] - 1] != null) &&
-                (wallHitBox.getY() + wallHitBox.getHeight()/2 >= points[0][1] + sizeY/2)) {
-                    velocityX = -velocityX*bounceModifier;
-                    notBesideOtherWall = false;
-                } else if ((wallCoordinates[1] + 1 < hitBoxArray[0].length) &&
+                (wallHitBox.getY() + wallHitBox.getHeight()/2 >= points[0][1] + sizeY/2)) ||
+                ((wallCoordinates[1] + 1 < hitBoxArray[0].length) &&
                 (hitBoxArray[wallCoordinates[0]][wallCoordinates[1] + 1] != null) &&
-                (wallHitBox.getY() + wallHitBox.getHeight()/2 < points[0][1] + sizeY/2)) {
+                (wallHitBox.getY() + wallHitBox.getHeight()/2 < points[0][1] + sizeY/2))) {
                     velocityX = -velocityX*bounceModifier;
                     notBesideOtherWall = false;
                 }
@@ -128,6 +140,8 @@ public class TestSquareBullet extends Bullet{
                         velocityY = -velocityY*bounceModifier;
                         bothChanged = false;
                     }
+                    //niche case where the bullet bounces off a corner and cannot intersect with
+                    //the wall by moving in only one direction
                     if (bothChanged) {
                         velocityX = -velocityX*bounceModifier;
                         velocityY = -velocityY*bounceModifier;
@@ -135,21 +149,11 @@ public class TestSquareBullet extends Bullet{
                     backTranslate.setToTranslation(0, velocityBackY);
                     hitBox.transform(backTranslate);
                 }
+                //changing the velocity of the hitbox
                 bulletTransform.setToTranslation(velocityX, velocityY);
+                //bulletImage = rotateBullet(bulletImageOriginal, Math.atan2(velocityX, velocityY) + Math.PI*3/2);
             }
         }
-    }
-    
-    public void draw(double addedX, double addedY, Graphics g) {
-        g.setColor(bulletColor);
-        g.fillRect((int) points[0][0], (int) points[0][1], (int) sizeX, (int) sizeY);
-        g.setColor(Color.GREEN);
-        g.drawRect((int) hitBox.getBounds().getX(), (int) hitBox.getBounds().getY(), 
-        (int) hitBox.getBounds().getWidth(), (int) hitBox.getBounds().getHeight());
-        if (testSquare) {
-            g.fillRect((int) testingSquare.getX(), (int) testingSquare.getY(), 50, 50);
-        }
-        testSquare = false;
     }
     
     public void collisionWithEntity() {
