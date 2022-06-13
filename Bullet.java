@@ -12,6 +12,7 @@ import java.awt.geom.Area;
 import java.awt.geom.AffineTransform;
 import java.awt.Shape;
 import java.awt.Rectangle;
+import java.awt.Color;
 import java.util.ArrayList; 
 import java.awt.image.BufferedImage; 
 import javax.imageio.ImageIO;
@@ -33,7 +34,6 @@ public abstract class Bullet{
     protected int bounceCount;
     protected double bounceModifier;
     protected boolean hostileToPlayer;
-    protected double disappearDistance;
     protected double appearingTime = 0;
     protected Area hitBox;
     protected ArrayList<Bullet> bulletList;
@@ -57,7 +57,6 @@ public abstract class Bullet{
     * @param accelerationY - y acceleration
     * @param damage - damage of bullet
     * @param size - size of bullet
-    * @param bulletColor - color of bullet in a Color object
     * @param pierceCount - the amount of enemies the bullet can hit before disappearing
     * @param bounceCount - the amount of walls the bullet can bounce off of before disappearing
     * @param bounceModifier - the amount of velocity change when bouncing
@@ -71,8 +70,8 @@ public abstract class Bullet{
     */
     public Bullet(double x, double y, double velocityX, double velocityY, double accelerationX, 
     double accelerationY, double damage, double sizeX, double sizeY, int pierceCount, 
-    int bounceCount, double bounceModifier, boolean hostileToPlayer,
-    double disappearDistance, ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath) {
+    int bounceCount, double bounceModifier, boolean hostileToPlayer, 
+    ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath) {
         //points are stored to make rotation easier
         this.points = new double[][]{new double[]{x - sizeX/2,y - sizeY/2}, 
         new double[]{x + sizeX/2,y - sizeY/2}, 
@@ -91,12 +90,10 @@ public abstract class Bullet{
         this.damage = damage;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        this.bulletColor = bulletColor;
         this.pierceCount = pierceCount;
         this.bounceCount = bounceCount;
         this.bounceModifier = bounceModifier;
         this.hostileToPlayer = hostileToPlayer;
-        this.disappearDistance = disappearDistance;
         this.hitBox = new Area(hitBoxShape);
         this.bulletList = bulletList;
         this.bulletTransform.setToTranslation(velocityX, velocityY);
@@ -335,20 +332,6 @@ public abstract class Bullet{
     }
     
     /**
-    * @return Color return the bulletColor
-    */
-    public Color getBulletColor() {
-        return bulletColor;
-    }
-    
-    /**
-    * @param bulletColor the bulletColor to set
-    */
-    public void setBulletColor(Color bulletColor) {
-        this.bulletColor = bulletColor;
-    }
-    
-    /**
     * @return int return the pierceCount
     */
     public int getPierceCount() {
@@ -388,20 +371,6 @@ public abstract class Bullet{
     */
     public void setBounceModifier(double bounceModifier) {
         this.bounceModifier = bounceModifier;
-    }
-    
-    /**
-    * @return double return the disappearDistance
-    */
-    public double getDisappearDistance() {
-        return disappearDistance;
-    }
-    
-    /**
-    * @param disappearDistance the disappearDistance to set
-    */
-    public void setDisappearDistance(double disappearDistance) {
-        this.disappearDistance = disappearDistance;
     }
     
     /**
