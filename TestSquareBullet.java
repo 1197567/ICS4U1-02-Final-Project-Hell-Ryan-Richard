@@ -37,7 +37,7 @@ public class TestSquareBullet extends Bullet{
         0, 1, 20, 40, Color.RED, 0, 
         999, 1, false, 0, 
         bulletList, new Rectangle(90, 80, 20, 40), 
-        "resources/TestSquareBulletImageTest.png");
+        "TestSquareBulletImageTest.png");
     }
     
     
