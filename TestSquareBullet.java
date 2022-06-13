@@ -8,7 +8,6 @@
 
 //import statements
 //this is the same thing as testBullet but with a different shape go read that for comments
-import java.awt.Color;
 import java.util.ArrayList; 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -34,8 +33,8 @@ public class TestSquareBullet extends Bullet{
     */
     public TestSquareBullet(ArrayList<Bullet> bulletList) {
         super(100, 100, 8, 10, 0, 
-        0, 1, 20, 40, Color.RED, 0, 
-        999, 1, false, 0, 
+        0, 1, 20, 40, 0, 
+        999, 1, false, 
         bulletList, new Rectangle(90, 80, 20, 40), 
         "TestSquareBulletImageTest.png");
     }
