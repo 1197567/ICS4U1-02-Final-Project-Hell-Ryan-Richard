@@ -6,11 +6,18 @@
 * June 2022
 */
 
+import java.util.ArrayList; 
+import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.AffineTransform;
+
 public class PlayerBasicBullet extends Bullet {
     
-    public PlayerBasicBullet(double x, double y, velocityX, velocityY, 
+
+
+    public PlayerBasicBullet(double x, double y, double velocityX, double velocityY, 
     ArrayList<Bullet> bulletList) {
-        super(x,y, velocityX, velocityY, 0, 0, 1, 1, 6, 6, 0, 0, 0, false, 
+        super(x,y, velocityX, velocityY, 0, 0, 1,  6, 6, 0, 0, 0, false, 
         bulletList, new Ellipse2D.Double(x - 3, y - 3, 6, 6), "PlayerBasicBullet.png");
     }
 
