@@ -39,7 +39,7 @@ public class TestBullet extends Bullet{
         super(150, 100, 0, 0, 0, 
         0, 1, 20, 20, Color.RED, 0, 
         999, 1, false, 0, 
-        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "resources/TestBulletImage.png");
+        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png");
     }
 
     /*

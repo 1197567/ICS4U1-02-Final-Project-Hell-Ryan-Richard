@@ -6,7 +6,6 @@
 * June 2022
 */
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Area;
@@ -30,7 +29,6 @@ public abstract class Bullet{
     protected double damage;
     protected double sizeX;
     protected double sizeY;
-    protected Color bulletColor;
     protected int pierceCount;
     protected int bounceCount;
     protected double bounceModifier;
@@ -72,7 +70,7 @@ public abstract class Bullet{
     * @param hostileToPlayer - boolean indicating whether the bullet can hit the player
     */
     public Bullet(double x, double y, double velocityX, double velocityY, double accelerationX, 
-    double accelerationY, double damage, double sizeX, double sizeY, Color bulletColor, int pierceCount, 
+    double accelerationY, double damage, double sizeX, double sizeY, int pierceCount, 
     int bounceCount, double bounceModifier, boolean hostileToPlayer,
     double disappearDistance, ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath) {
         //points are stored to make rotation easier
@@ -103,7 +101,7 @@ public abstract class Bullet{
         this.bulletList = bulletList;
         this.bulletTransform.setToTranslation(velocityX, velocityY);
         try {
-            bulletImageOriginal = ImageIO.read(new File(imagePath)); 
+            bulletImageOriginal = ImageIO.read(new File("resources/" + imagePath)); 
         } catch (Exception e) {
             System.out.println("FILE OF " + imagePath + " NOT FOUND");
         }
