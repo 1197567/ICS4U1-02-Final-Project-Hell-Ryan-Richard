@@ -7,7 +7,6 @@
 */
 
 //import statements
-import java.awt.Color;
 import java.util.ArrayList; 
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
@@ -25,7 +24,6 @@ public class TestBullet extends Bullet{
     * @param accelerationY - y acceleration
     * @param damage - damage of bullet
     * @param size - size of bullet
-    * @param bulletColor - color of bullet in a Color object
     * @param pierceCount - the amount of enemies the bullet can hit before disappearing
     * @param bounceCount - the amount of walls the bullet can bounce off of before disappearing
     * @param bounceModifier - the amount of velocity change when bouncing
@@ -37,8 +35,8 @@ public class TestBullet extends Bullet{
     */
     public TestBullet(ArrayList<Bullet> bulletList) {
         super(150, 100, 0, 0, 0, 
-        0, 1, 20, 20, Color.RED, 0, 
-        999, 1, false, 0, 
+        0, 1, 20, 20, 0, 
+        999, 1, false, 
         bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png");
     }
 
