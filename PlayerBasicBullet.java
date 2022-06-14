@@ -1,4 +1,4 @@
-/** [TestSquareBullet.java]
+/** [BasicRoom.java]
 * ICS4U1-02
 * @Richard Yang
 * @Ryan Zareh
@@ -6,40 +6,21 @@
 * June 2022
 */
 
-//import statements
-//this is the same thing as testBullet but with a different shape go read that for comments
 import java.util.ArrayList; 
 import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.AffineTransform;
 
-public class TestSquareBullet extends Bullet{
-    /*
-    * constructor of bullet
-    * @param x - x position
-    * @param y - y position
-    * @param velocityx - x velocity
-    * @param velocityy - y velocity
-    * @param accelerationx - x acceleration
-    * @param accelerationy - y acceleration
-    * @param speed - speed of bullet
-    * @param damage - damage of bullet
-    * @param size - size of bullet
-    * @param bulletColor - color of bullet in a Color object
-    * @param pierceCount - the amount of enemies the bullet can hit before disappearing
-    * @param bounceCount - the amount of walls the bullet can bounce off of before disappearing
-    * @param bounceModifier - the amount of velocity change when bouncing
-    * @oaram willDisappear - boolean value indicating if the bullet will disappear by itself
-    * @param disappearDistance - distance bullet travels before disappearing
-    */
-    public TestSquareBullet(ArrayList<Bullet> bulletList) {
-        super(100, 100, 8, 10, 0, 
-        0, 1, 20, 40, 0, 
-        999, 1, false, 
-        bulletList, new Rectangle(90, 80, 20, 40), 
-        "TestSquareBulletImageTest.png");
+public class PlayerBasicBullet extends Bullet {
+    
+
+
+    public PlayerBasicBullet(double x, double y, double velocityX, double velocityY, 
+    ArrayList<Bullet> bulletList) {
+        super(x,y, velocityX, velocityY, 0, 0, 1,  6, 6, 0, 0, 0, false, 
+        bulletList, new Ellipse2D.Double(x - 3, y - 3, 6, 6), "PlayerBasicBullet.png");
     }
-    
-    
+
     /*
     * collisionWithWall
     * method responsible for detecting collision between this bullet and a wall 
@@ -150,17 +131,23 @@ public class TestSquareBullet extends Bullet{
                 }
                 //changing the velocity of the hitbox
                 bulletTransform.setToTranslation(velocityX, velocityY);
-                //bulletImage = rotateBullet(bulletImageOriginal, Math.atan2(velocityX, velocityY) + Math.PI*3/2);
             }
         }
     }
     
+    /**
+    * collisionWithEntity
+    * what happens when the bullet collides with an entity
+    */
     public void collisionWithEntity() {
         bulletDisappear();
     }
     
+    /**
+    * bulletDisappear
+    * responsible for what happens when the bullet disappears or "dies"
+    */
     public void bulletDisappear() {
         bulletList.remove(this);
     }
-    
 }

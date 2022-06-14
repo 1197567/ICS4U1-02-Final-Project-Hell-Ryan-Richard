@@ -7,18 +7,12 @@
 */
 
 //import statements
-import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList; 
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.AffineTransform;
 
 public class TestBullet extends Bullet{
-    
-    //declaring class variables
-    boolean testSquare = false;
-    Rectangle testingSquare;
     
     /*
     * constructor of bullet
@@ -30,7 +24,6 @@ public class TestBullet extends Bullet{
     * @param accelerationY - y acceleration
     * @param damage - damage of bullet
     * @param size - size of bullet
-    * @param bulletColor - color of bullet in a Color object
     * @param pierceCount - the amount of enemies the bullet can hit before disappearing
     * @param bounceCount - the amount of walls the bullet can bounce off of before disappearing
     * @param bounceModifier - the amount of velocity change when bouncing
@@ -41,12 +34,12 @@ public class TestBullet extends Bullet{
     * @param rotationRadian - the amount the bullet is rotated in radians from (0,1) clockwise
     */
     public TestBullet(ArrayList<Bullet> bulletList) {
-        super(100, 100, 10, 7, 0, 
-        0, 1, 20, 20, Color.RED, 0, 
-        999, 1, false, 0, 
-        bulletList, new Ellipse2D.Double(100, 100, 20, 20), 0);
+        super(150, 100, 0, 0, 0, 
+        0, 1, 20, 20, 0, 
+        999, 1, false, 
+        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png");
     }
-    
+
     /*
     * collisionWithWall
     * method responsible for detecting collision between this bullet and a wall 
@@ -159,27 +152,6 @@ public class TestBullet extends Bullet{
                 bulletTransform.setToTranslation(velocityX, velocityY);
             }
         }
-    }
-    
-    /**
-    * draw
-    * responsible for drawing the bullet
-    * @param addedX - added x-coordinate for viewing purposes
-    * @param addedY - added y-coordinate for viewing purposes
-    * @param g - graphics
-    */
-    public void draw(double addedX, double addedY, Graphics g) {
-        g.setColor(bulletColor);
-        //shape will change with each bullet
-        //maybe change to use hitBox shape?
-        g.fillOval((int) points[0][0], (int) points[0][1], (int) sizeX, (int) sizeY);
-        g.setColor(Color.GREEN);
-        g.drawRect((int) hitBox.getBounds().getX(), (int) hitBox.getBounds().getY(), 
-        (int) hitBox.getBounds().getHeight(), (int) hitBox.getBounds().getWidth());
-        if (testSquare) { //for testing purposes
-            g.fillRect((int) testingSquare.getX(), (int) testingSquare.getY(), 50, 50);
-        }
-        testSquare = false;
     }
     
     /**

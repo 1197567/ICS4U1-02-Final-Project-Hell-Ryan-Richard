@@ -1,32 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@1197567 
-1197567
-/
-ICS4U1-02-Final-Project-Hell-Ryan-Richard
-Private
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security
-Insights
-Settings
-ICS4U1-02-Final-Project-Hell-Ryan-Richard/Room
-@1197567
-1197567 Updated Room for Candy Walls and Floor
-Latest commit 0b1c0b3 now
- History
- 1 contributor
-203 lines (190 sloc)  7.64 KB
-
-
 /** [Room.java]
 * ICS4U1-02
 * @Richard Yang
@@ -37,13 +8,11 @@ Latest commit 0b1c0b3 now
 
 //import statements
 import java.awt.Graphics;
+import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import java.util.ArrayList; 
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
 
 public abstract class Room extends JPanel {
   /*
@@ -68,29 +37,17 @@ public abstract class Room extends JPanel {
   private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
   private boolean add = true;
   private Player player;
-  private BufferedImage candyFloor;
-  private BufferedImage candyWall;
   
   public Room(double x, double y, int horizontalDimension, int verticalDimension) {
     //temporary variable placeholders;
+    this.backgroundColor = Color.WHITE;
+    this.wallColor = Color.BLACK;
     this.horizontalDimension = horizontalDimension;
     this.verticalDimension = verticalDimension;
     this.roomFilling = new boolean[this.horizontalDimension][this.verticalDimension];
     this.roomHitBox = new Rectangle[this.horizontalDimension][this.verticalDimension];
     this.x = x;
     this.y = y;
-
-    try{
-      candyFloor = ImageIO.read(new File("Resources/Candy-Floor_Tile.png"));
-    }catch(Exception e){
-      System.out.println("FILEPATH OF CANDY FLOOR TILE WAS NOT FOUND");
-    }
-    try{
-      candyWall = ImageIO.read(new File("Resources/Candy-Wall-Tile.png"));
-    }catch(Exception e){
-      System.out.println("FILEPATH OF CANDY WALL TILE WAS NOT FOUND");
-    }
-
     //maybe make a generateRoom too because all rooms will have walls?
     generateRoomWalls();
     
@@ -126,13 +83,14 @@ public abstract class Room extends JPanel {
   * @param g - idk what this is but it's important
   */
   public void drawRoom(Graphics g) {
+    g.setColor(backgroundColor);
+    g.fillRect((int) x,(int) y, horizontalDimension*50, verticalDimension*50);
+    g.setColor(wallColor);
     //nested for loops draw all of the rooms that exist
     for (int i = 0; i < roomFilling.length; i++) {
       for (int j = 0; j < roomFilling[i].length; j++) {
-        if (!roomFilling[i][j]) {
-          g.drawImage(candyFloor, (int) (x + i*50), (int) (y + j*50), null);
-        } else {
-          g.drawImage(candyWall,(int) (x + i*50), (int) (y + j*50), null);
+        if (roomFilling[i][j]) {
+          g.fillRect((int) (x + i*50), (int) (y + j*50), 50, 50);
         }
       }
     }
@@ -221,24 +179,4 @@ public abstract class Room extends JPanel {
     roomHitBox[horizontalPosition][verticalPosition] = new Rectangle(horizontalPosition*50, 
     verticalPosition*50, 50,50);
   }
-
-  public Player getPlayer() {
-    return player;
-  }
-
-  public void setPlayer(Player playerToSet) {
-    this.player = playerToSet;
-  }
 }
-© 2022 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
