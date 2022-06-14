@@ -25,6 +25,7 @@ public abstract class Bullet{
     protected double[][] pointsOriginal;
     protected double velocityX;
     protected double velocityY;
+    protected double maxVelocity;
     protected double accelerationX;
     protected double accelerationY;
     protected double damage;
@@ -42,9 +43,10 @@ public abstract class Bullet{
     protected BufferedImage bulletImage;
     protected BufferedImage bulletImageOriginal;
     protected AffineTransform bulletRotation = new AffineTransform();
+    private int bulletInterval;
+    private double accuracy;
     boolean testSquare = false;
     Rectangle testingSquare;
-    double counter = 0;
     
     
     /*
@@ -53,10 +55,12 @@ public abstract class Bullet{
     * @param y - y position
     * @param velocityX - x velocity
     * @param velocityY - y velocity
+    * @param maxVelocity - maximum velocity
     * @param accelerationX - x acceleration
     * @param accelerationY - y acceleration
     * @param damage - damage of bullet
     * @param size - size of bullet
+    * @param bulletColor - color of bullet in a Color object
     * @param pierceCount - the amount of enemies the bullet can hit before disappearing
     * @param bounceCount - the amount of walls the bullet can bounce off of before disappearing
     * @param bounceModifier - the amount of velocity change when bouncing
@@ -68,10 +72,11 @@ public abstract class Bullet{
     * @param imagePath - the path of the image represented by an image
     * @param hostileToPlayer - boolean indicating whether the bullet can hit the player
     */
-    public Bullet(double x, double y, double velocityX, double velocityY, double accelerationX, 
-    double accelerationY, double damage, double sizeX, double sizeY, int pierceCount, 
-    int bounceCount, double bounceModifier, boolean hostileToPlayer, 
-    ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath) {
+    public Bullet(double x, double y, double velocityX, double velocityY, double maxVelocity,
+    double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
+    int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 
+    ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath, int bulletInterval,
+    double accuracy) {
         //points are stored to make rotation easier
         this.points = new double[][]{new double[]{x - sizeX/2,y - sizeY/2}, 
         new double[]{x + sizeX/2,y - sizeY/2}, 
@@ -85,6 +90,7 @@ public abstract class Bullet{
         }
         this.velocityX = velocityX;
         this.velocityY = velocityY;
+        this.maxVelocity = maxVelocity;
         this.accelerationX = accelerationX;
         this.accelerationY = accelerationY;
         this.damage = damage;
@@ -97,6 +103,8 @@ public abstract class Bullet{
         this.hitBox = new Area(hitBoxShape);
         this.bulletList = bulletList;
         this.bulletTransform.setToTranslation(velocityX, velocityY);
+        this.bulletInterval = bulletInterval;
+        this.accuracy = accuracy;
         try {
             bulletImageOriginal = ImageIO.read(new File("resources/" + imagePath)); 
         } catch (Exception e) {
@@ -137,8 +145,8 @@ public abstract class Bullet{
         //bulletImage = rotateBullet(bulletImage, Math.toRadians(counter += 0.01));
         //g.drawImage(bulletImage, (int) points[0][0], (int) points[0][1], null);
         g.drawImage(bulletImage, 
-        (int) ((points[0][0] + points[3][0])/2 - (sizeX/2) - (bulletImage.getWidth() - sizeX)/2), 
-        (int) ((points[0][1] + points[3][1])/2 - (sizeY/2) - (bulletImage.getHeight() - sizeY)/2)
+        (int) ((points[0][0] + points[3][0])/2 - (sizeX/2) - (bulletImage.getWidth() - sizeX)/2 + addedX), 
+        (int) ((points[0][1] + points[3][1])/2 - (sizeY/2) - (bulletImage.getHeight() - sizeY)/2 + addedY)
         ,null);
         
         g.setColor(Color.GREEN);
@@ -165,7 +173,8 @@ public abstract class Bullet{
         testSquare = false;
     }
     
-    public abstract void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray);
+    public abstract void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray,
+    int wallHitBoxX, int wallHitBoxY);
     
     public abstract void collisionWithEntity();
     
@@ -193,7 +202,7 @@ public abstract class Bullet{
     * @param x x coordinate of new position
     * @param y y coordinate of new position
     */
-    public void translateBullet(int translateX, int translateY) {
+    public void translateBullet(double translateX, double translateY) {
         for (int i = 0; i < points.length; i++) {
             points[i][0] += translateX;
             points[i][1] += translateY;
@@ -203,7 +212,7 @@ public abstract class Bullet{
         this.bulletTransform.setToTranslation(velocityX, velocityY);
     }
     
-    public BufferedImage rotateBullet(BufferedImage givenBulletImage, double angle) {
+    private BufferedImage rotateBullet(BufferedImage givenBulletImage, double angle) {
         
         double centerX = (points[0][0] + points[3][0])/2;
         double centerY = (points[0][1] + points[3][1])/2;
@@ -230,9 +239,9 @@ public abstract class Bullet{
         hitBox.transform(bulletRotation);
         return rotatedImage;
     }
-    
 
-    
+    public abstract Bullet returnSelf(double x, double y, double velocityX, double velocityY);
+
     /**
     * @return double return the velocityX
     */
@@ -250,42 +259,56 @@ public abstract class Bullet{
     /**
     * @return double return the velocityY
     */
-    public double getvelocityY() {
+    public double getVelocityY() {
         return velocityY;
     }
     
     /**
     * @param velocityY the velocityY to set
     */
-    public void setvelocityY(double velocityY) {
+    public void setVelocityY(double velocityY) {
         this.velocityY = velocityY;
+    }
+
+    /**
+    * @return double return the maxVelocity
+    */
+    public double getMaxVelocity() {
+        return maxVelocity;
+    }
+    
+    /**
+    * @param maxVelocity the maxVelocity to set
+    */
+    public void setMaxVelocity(double maxVelocity) {
+        this.maxVelocity = maxVelocity;
     }
     
     /**
     * @return double return the accelerationX
     */
-    public double getaccelerationX() {
+    public double getAccelerationX() {
         return accelerationX;
     }
     
     /**
     * @param accelerationX the accelerationX to set
     */
-    public void setaccelerationX(double accelerationX) {
+    public void setAccelerationX(double accelerationX) {
         this.accelerationX = accelerationX;
     }
     
     /**
     * @return double return the accelerationY
     */
-    public double getaccelerationY() {
+    public double getAccelerationY() {
         return accelerationY;
     }
     
     /**
     * @param accelerationY the accelerationY to set
     */
-    public void setaccelerationY(double accelerationY) {
+    public void setAccelerationY(double accelerationY) {
         this.accelerationY = accelerationY;
     }
     
@@ -400,4 +423,23 @@ public abstract class Bullet{
     public void setWallCollided(ArrayList<Rectangle> wallCollided) {
         this.wallCollided = wallCollided;
     }
+
+    /**
+     * @return int return the bulletInterval
+     */
+    public int getBulletInterval() {
+        return bulletInterval;
+    }
+
+    /**
+     * @param bulletInterval the bulletInterval to set
+     */
+    public void setBulletInterval(int bulletInterval) {
+        this.bulletInterval = bulletInterval;
+    }
+
+    public double getAccuracy() {
+        return accuracy;
+    }
+
 }

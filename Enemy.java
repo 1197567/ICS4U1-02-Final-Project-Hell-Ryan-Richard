@@ -5,36 +5,47 @@
 * @version 1.0
 * June 2022
 */
-import java.awt.Color;
+
 import java.awt.Graphics;
-import java.awt.geom.Area;
-import java.awt.geom.AffineTransform;
-import java.awt.Shape;
 import java.awt.Rectangle;
 import java.util.ArrayList; 
-
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
 
 public abstract class Enemy{
-
-/*Variables*/  
-  private double x;
-  private double y;
-  private String name;
-  private double health;
-  private double speed;
-  private BasicRoom presentRoom = new BasicRoom(0,0);
   
-/*Constructer*/
-  public Enemy(int x,int y,String name,int health,int speed,BasicRoom presentRoom){
+  /*Variables*/  
+  protected double x;
+  protected double y;
+  protected double velocityX;
+  protected double velocityY;
+  protected int width;
+  protected int height;
+  protected String name;
+  protected  double health;
+  protected ArrayList<Enemy> enemyList;
+  protected Rectangle hitBox;
+  protected BufferedImage sprite;
+  
+  /*Constructer*/
+  public Enemy(double x,double y, double velocityX,
+  double velocityY,int width, int height, String name,int health,
+  ArrayList<Enemy> enemyList, Rectangle hitBox, String imagePath){
     this.x=x;
     this.y=y;
     this.name=name;
     this.health=health;
-    this.speed=speed;
-    this.presentRoom=presentRoom;
+    this.enemyList = enemyList;
+    this.hitBox = hitBox;
+    try{
+      sprite = ImageIO.read(new File("enemyResources/" + imagePath));
+    }catch(Exception e){
+      System.out.println("error");
+    }
   }
   
-/*Setters and Getters*/
+  /*Setters and Getters*/
   public void setX(double x){
     this.x=x;
   }
@@ -66,30 +77,15 @@ public abstract class Enemy{
   public double getHealth(){
     return health;
   }
-  
-  public void setSpeed(double speed){
-    this.speed=speed;
+
+  /*Methods*/
+  public void drawEnemy(double addedX,double addedY,Graphics g) {
+    g.drawImage(sprite,(int) x,(int) y,null);
   }
-  
-  public double getSpeed(){
-    return speed;
-  }
-  
-  public void setPresentRoom(BasicRoom setPresentRoom){
-    this.presentRoom=presentRoom;
-  }
-  
-  public BasicRoom getPresentRoom(){
-    return presentRoom;
-  }
-  
-/*Methods*/
-  public abstract void drawEnemy(double addedX,double addedY,Graphics gameWindow);
   
   public abstract void movement();
   
-  public void fireBullet(){
-  }
+  public abstract void fireBullet();
   
   public boolean death(double health){
     boolean isDead = false;

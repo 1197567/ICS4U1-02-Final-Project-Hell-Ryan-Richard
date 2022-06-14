@@ -30,13 +30,14 @@ public class TestSquareBullet extends Bullet{
     * @param bounceModifier - the amount of velocity change when bouncing
     * @oaram willDisappear - boolean value indicating if the bullet will disappear by itself
     * @param disappearDistance - distance bullet travels before disappearing
+    * @param 
     */
     public TestSquareBullet(ArrayList<Bullet> bulletList) {
-        super(100, 100, 8, 10, 0, 
+        super(100, 100, 8, 10, 5, 0, 
         0, 1, 20, 40, 0, 
         999, 1, false, 
         bulletList, new Rectangle(90, 80, 20, 40), 
-        "TestSquareBulletImageTest.png");
+        "TestSquareBulletImageTest.png", 0, 0);
     }
     
     
@@ -46,7 +47,8 @@ public class TestSquareBullet extends Bullet{
     * @param wallHitBox - initial rectangle object from wall used for collisions
     * @param hitBoxArray - the array of hitBoxes from rectangles from the room
     */
-    public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray) {
+    public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray, 
+    int wallHitBoxX, int wallHitBoxY) {
         //the first two lines are for testing
         testingSquare = wallHitBox;
         testSquare = true;
@@ -72,7 +74,7 @@ public class TestSquareBullet extends Bullet{
                 boolean inWall;
                 boolean bothChanged = true;
                 boolean notBesideOtherWall = true;
-                int[] wallCoordinates = new int[]{(int) wallHitBox.getX()/50, (int) wallHitBox.getY()/50};
+                int[] wallCoordinates = new int[]{wallHitBoxX, wallHitBoxY};
                 do {
                     //wallCollided ensures that the bullet doesn't 
                     //immediately collide again after bouncing
@@ -161,6 +163,10 @@ public class TestSquareBullet extends Bullet{
     
     public void bulletDisappear() {
         bulletList.remove(this);
+    }
+
+    public TestSquareBullet returnSelf(double x, double y, double velocityX, double velocityY) {
+        return new TestSquareBullet(bulletList);
     }
     
 }
