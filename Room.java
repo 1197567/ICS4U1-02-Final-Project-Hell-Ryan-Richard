@@ -8,11 +8,13 @@
 
 //import statements
 import java.awt.Graphics;
-import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import java.util.ArrayList; 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
 
 public abstract class Room extends JPanel {
   /*
@@ -26,8 +28,6 @@ public abstract class Room extends JPanel {
   * bulletList - arrayList of bullets
   * add - testing variable used to add an amount of bullets when starting
   */
-  private Color backgroundColor;
-  private Color wallColor;
   protected int horizontalDimension;
   protected int verticalDimension;
   protected boolean[][] roomFilling;
@@ -37,27 +37,43 @@ public abstract class Room extends JPanel {
   private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
   private boolean add = true;
   private Player player;
+  private BufferedImage candyFloor;
+  private BufferedImage candyWall;
   
-  public Room(double x, double y, int horizontalDimension, int verticalDimension) {
+  public Room(double x, double y, int horizontalDimension, int verticalDimension, Player player) {
     //temporary variable placeholders;
-    this.backgroundColor = Color.WHITE;
-    this.wallColor = Color.BLACK;
     this.horizontalDimension = horizontalDimension;
     this.verticalDimension = verticalDimension;
     this.roomFilling = new boolean[this.horizontalDimension][this.verticalDimension];
     this.roomHitBox = new Rectangle[this.horizontalDimension][this.verticalDimension];
     this.x = x;
     this.y = y;
+    this.player = player;
+
+    try{
+      candyFloor = ImageIO.read(new File("Resources/Candy-Floor_Tile.png"));
+    }catch(Exception e){
+      System.out.println("FILEPATH OF CANDY FLOOR TILE WAS NOT FOUND");
+    }
+    try{
+      candyWall = ImageIO.read(new File("Resources/Candy-Wall-Tile.png"));
+    }catch(Exception e){
+      System.out.println("FILEPATH OF CANDY WALL TILE WAS NOT FOUND");
+    }
+
     //maybe make a generateRoom too because all rooms will have walls?
     generateRoomWalls();
     
     //JPanel settings
-    this.setFocusable(true);
-    this.setOpaque(true);
-    this.setPreferredSize(new Dimension(800, 600));
-    this.setBackground(Color.GREEN);
-    this.setVisible(true);
-    this.revalidate();
+    setFocusable(true);
+    requestFocusInWindow();
+    setOpaque(true);
+    setPreferredSize(new Dimension(800, 600));
+    setVisible(true);
+    addMouseMotionListener(player.getMouseMotionListener());
+    addMouseListener(player.getMouseListener());
+    addKeyListener(player.getKeyListener());
+    revalidate();
   }
   
   protected abstract void generateRoomWalls();
@@ -73,8 +89,9 @@ public abstract class Room extends JPanel {
     drawRoom(g);
     //draws all the bullets in the bulletList
     for (int i = 0; i < bulletList.size(); i++) {
-      bulletList.get(i).draw(x,y,g);
+      bulletList.get(i).draw(x, y, g);
     }
+    player.draw(g);
   }
   
   /**
@@ -83,14 +100,17 @@ public abstract class Room extends JPanel {
   * @param g - idk what this is but it's important
   */
   public void drawRoom(Graphics g) {
-    g.setColor(backgroundColor);
-    g.fillRect((int) x,(int) y, horizontalDimension*50, verticalDimension*50);
-    g.setColor(wallColor);
     //nested for loops draw all of the rooms that exist
     for (int i = 0; i < roomFilling.length; i++) {
       for (int j = 0; j < roomFilling[i].length; j++) {
-        if (roomFilling[i][j]) {
-          g.fillRect((int) (x + i*50), (int) (y + j*50), 50, 50);
+        if (!roomFilling[i][j]) {
+          g.drawImage(candyFloor, (int) (x + i*50), (int) (y + j*50), null);
+        } else {
+          g.drawImage(candyWall,(int) (x + i*50), (int) (y + j*50), null);
+        }
+        if (roomHitBox[i][j] != null) {
+          g.fillRect((int) (roomHitBox[i][j].getX()), 
+          (int) (roomHitBox[i][j].getY()), 50, 50);
         }
       }
     }
@@ -114,6 +134,15 @@ public abstract class Room extends JPanel {
       }
       add = false;
     }
+    player.move();
+    player.shootingBullet();
+    for (int i = 0; i < roomFilling.length; i++) {
+      for (int j = 0; j < roomFilling[i].length; j++) {
+        if ((roomFilling[i][j]) && (player.collidingWithRectangle(roomHitBox[i][j]))) {
+          player.wallCollision(roomHitBox[i][j]);
+        }
+      }
+    }
   }
   
   /**
@@ -133,15 +162,20 @@ public abstract class Room extends JPanel {
       (bullet.getPoints()[i][1]/50 < 0) ) {
         bullet.bulletDisappear();
         i = bullet.getPoints().length;
-      } else if (roomFilling[(int) bullet.getPoints()[i][0]/50][(int) bullet.getPoints()[i][1]/50]) {
+      } else if (roomFilling[(int) bullet.getPoints()[i][0]/50]
+      [(int) bullet.getPoints()[i][1]/50]) {
         //wallsCollided are the walls the bullet has recently collided with and are included
         //so the bullet doesn't immediately collide again after bouncing off
         //this section of code essentially removes any walls on the wallsCollided array that the bullet
         //has left the hitBox of
         if (!bullet.getWallCollided().contains
-        (roomHitBox[(int) bullet.getPoints()[i][0]/50][(int) bullet.getPoints()[i][1]/50])) {
+        (roomHitBox[(int) bullet.getPoints()[i][0]/50]
+        [(int) bullet.getPoints()[i][1]/50])) {
           bullet.collisionWithWall(
-          roomHitBox[(int) bullet.getPoints()[i][0]/50][(int) bullet.getPoints()[i][1]/50], roomHitBox);
+          roomHitBox[(int) bullet.getPoints()[i][0]/50]
+          [(int) bullet.getPoints()[i][1]/50], roomHitBox, 
+          (int) bullet.getPoints()[i][0]/50,
+          (int) bullet.getPoints()[i][1]/50);
           i = bullet.getPoints().length;
         }
       }
@@ -155,12 +189,15 @@ public abstract class Room extends JPanel {
     //bullet before to make sure no double collisions occur
     for (int i = 0; i < bullet.getPoints().length; i++) {
       for (int j = 0; j < bullet.getWallCollided().size(); j++) {
-        if (((bullet.getPoints()[i][0]/50) > 0) && ((bullet.getPoints()[i][0]/50) < roomHitBox.length) &&
-        ((bullet.getPoints()[i][1]/50) > 0) && ((bullet.getPoints()[i][1]/50) < roomHitBox[0].length) &&
+        if (((bullet.getPoints()[i][0]/50) > 0) && 
+        ((bullet.getPoints()[i][0]/50) < roomHitBox.length) &&
+        ((bullet.getPoints()[i][1]/50) > 0) && 
+        ((bullet.getPoints()[i][1]/50) < roomHitBox[0].length) &&
         (bullet.getWallCollided().get(j))
-        .equals(roomHitBox[(int) bullet.getPoints()[i][0]/50][(int) bullet.getPoints()[i][1]/50])) {
+        .equals(roomHitBox[(int) bullet.getPoints()[i][0]/50]
+        [(int) bullet.getPoints()[i][1]/50])) {
           wallCollidedNew.add(roomHitBox
-          [(int) bullet.getPoints()[i][0]/50][(int) bullet.getPoints()[i][1]/50]);
+          [(int)bullet.getPoints()[i][0]/50][(int) bullet.getPoints()[i][1]/50]);
           bullet.getWallCollided().remove(j);
         }
       }
@@ -178,5 +215,29 @@ public abstract class Room extends JPanel {
     roomFilling[horizontalPosition][verticalPosition] = true;
     roomHitBox[horizontalPosition][verticalPosition] = new Rectangle(horizontalPosition*50, 
     verticalPosition*50, 50,50);
+  }
+
+  public Player getPlayer() {
+    return player;
+  }
+
+  public void setPlayer(Player playerToSet) {
+    this.player = playerToSet;
+  }
+
+  public ArrayList<Bullet> getBulletList() {
+    return bulletList;
+  }
+
+  public void setBulletList(ArrayList<Bullet> bulletList) {
+    this.bulletList = bulletList;
+  }
+
+  public void addX(double additionX) {
+    x += additionX;
+  }
+
+  public void addY(double additionY) {
+    y += additionY;
   }
 }

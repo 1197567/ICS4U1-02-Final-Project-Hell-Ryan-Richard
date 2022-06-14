@@ -17,8 +17,9 @@ public class PlayerBasicBullet extends Bullet {
 
     public PlayerBasicBullet(double x, double y, double velocityX, double velocityY, 
     ArrayList<Bullet> bulletList) {
-        super(x,y, velocityX, velocityY, 0, 0, 1,  6, 6, 0, 0, 0, false, 
-        bulletList, new Ellipse2D.Double(x - 3, y - 3, 6, 6), "PlayerBasicBullet.png");
+        super(x,y, velocityX, velocityY, 5, 0, 0, 1,  6, 6, 0, 0, 0, false, 
+        bulletList, new Ellipse2D.Double(x - 3, y - 3, 6, 6), "PlayerBasicBullet.png",
+        5, 0.1);
     }
 
     /*
@@ -27,15 +28,14 @@ public class PlayerBasicBullet extends Bullet {
     * @param wallHitBox - initial rectangle object from wall used for collisions
     * @param hitBoxArray - the array of hitBoxes from rectangles from the room
     */
-    public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray) {
+    public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray,
+    int wallHitBoxX, int wallHitBoxY) {
         //the first two lines are for testing
         testingSquare = wallHitBox;
         testSquare = true;
         if (hitBox.intersects(wallHitBox)) { //tests if the two hitboxes really intercept
             if (bounceCount <= 0) { //deletes the bullet if it has no bounces
                 bulletDisappear();
-                //print statement for testing purposes
-                System.out.println("EXHAUSTED BOUNCES ON TESTBULLET");
             } else {
                 bounceCount--;         
                 //to "bounce" the bullet the method does these steps
@@ -150,4 +150,9 @@ public class PlayerBasicBullet extends Bullet {
     public void bulletDisappear() {
         bulletList.remove(this);
     }
+
+    public PlayerBasicBullet returnSelf(double x, double y, double velocityX, double velocityY) {
+        return new PlayerBasicBullet(x, y, velocityX, velocityY, bulletList);
+    }
+
 }

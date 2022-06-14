@@ -18,6 +18,7 @@ public class TestBullet extends Bullet{
     * constructor of bullet
     * @param x - x position
     * @param y - y position
+    * @param maxVelocity - max velocity
     * @param velocityX - x velocity
     * @param velocityY - y velocity
     * @param accelerationX - x acceleration
@@ -34,10 +35,10 @@ public class TestBullet extends Bullet{
     * @param rotationRadian - the amount the bullet is rotated in radians from (0,1) clockwise
     */
     public TestBullet(ArrayList<Bullet> bulletList) {
-        super(150, 100, 0, 0, 0, 
+        super(150, 100, 0, 0, 5, 0, 
         0, 1, 20, 20, 0, 
         999, 1, false, 
-        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png");
+        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png", 0, 0);
     }
 
     /*
@@ -46,7 +47,8 @@ public class TestBullet extends Bullet{
     * @param wallHitBox - initial rectangle object from wall used for collisions
     * @param hitBoxArray - the array of hitBoxes from rectangles from the room
     */
-    public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray) {
+    public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray,
+    int wallHitBoxX, int wallHitBoxY) {
         //the first two lines are for testing
         testingSquare = wallHitBox;
         testSquare = true;
@@ -168,6 +170,10 @@ public class TestBullet extends Bullet{
     */
     public void bulletDisappear() {
         bulletList.remove(this);
+    }
+
+    public TestBullet returnSelf(double x, double y, double velocityX, double velocityY) {
+        return new TestBullet(bulletList);
     }
     
 }

@@ -19,8 +19,8 @@ public class BasicRoom extends Room {
     */
     
     
-    public BasicRoom(double x, double y) {
-        super(x,y,11,10);
+    public BasicRoom(double x, double y, Player player) {
+        super(x,y,40,40, player);
     }
     
     protected void generateRoomWalls() {
@@ -32,8 +32,10 @@ public class BasicRoom extends Room {
             generateWall(0, i);
             generateWall(horizontalDimension - 1, i);
         }
-        generateWall(4, 4);
-        generateWall(5, 5);
-        generateWall(7, 3);
+        
+        //generateWall(4, 4);
+        generateWall(6, 5);
+        //generateWall(7, 3);
+        
     }
 }

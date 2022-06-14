@@ -17,12 +17,16 @@ public class BulletHellMain{
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static Room gamePanel;
+    private static int gameCounter = 0;
     
     
     public static void main(String[] args){
         
         gameWindow = new JFrame("Bullet_Hell"); //create JFrame
-        gamePanel = new BasicRoom(0,0); //create test jPanel
+        Player player = new Player(400 - 13.5, 300 - 17.5, 1,5, 5);
+        gamePanel = new BasicRoom(0,0, player); 
+        player.setPresentRoom(gamePanel);
+
         gameWindow.add(gamePanel);
         
         //Setting up JFrame states
@@ -35,6 +39,7 @@ public class BulletHellMain{
     
     private static void runGameLoop() {
         while(true) {
+            gameCounter++;
             gameWindow.repaint(); //repaint will do visuals
             gamePanel.runGame(); //method in gamePanel which does all the game stuff
             try  {Thread.sleep(20); //20 milliseconds between each frame, ~50 fps without lag
