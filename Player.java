@@ -51,13 +51,13 @@ public class Player{
         
         for (int i = 0; i < 10; i++) {
             try{
-                mainCharacterSprite[i] = ImageIO.read(new File("resources/Main_Character" + i + ".png"));
+                mainCharacterSprite[i] = ImageIO.read(new File("Resources/Main_Character" + i + ".png"));
             }catch(Exception e){
                 System.out.println("COULD NOT FIND FILEPATH FOR MAIN CHARACTER " + i);
             }
         }
         try{
-            aimArrowOriginal = ImageIO.read(new File("resources/Aim_Arrow.png"));
+            aimArrowOriginal = ImageIO.read(new File("Resources/Aim_Arrow.png"));
         }catch(Exception e){
             System.out.println("COULD NOT FIND FILEPATH FOR AIM ARROW ");
         }
@@ -90,7 +90,6 @@ public class Player{
         if (bulletCountDown > 0) {
             bulletCountDown --;
         }
-        System.out.println("HI");
         if ((shooting) && (bulletCountDown <= 0)) {
             shootBullet();
             bulletCountDown = bulletType.getBulletInterval();
