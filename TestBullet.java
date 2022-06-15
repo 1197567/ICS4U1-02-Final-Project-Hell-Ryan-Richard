@@ -36,9 +36,10 @@ public class TestBullet extends Bullet{
     */
     public TestBullet(ArrayList<Bullet> bulletList) {
         super(150, 100, 0, 0, 5, 0, 
-        0, 1, 20, 20, 0, 
+        0, 0, 20, 20, 0, 
         999, 1, false, 
-        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png", 0, 0);
+        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png", 
+        0, 0, "CircleTestBullet");
     }
 
     /*
@@ -49,9 +50,6 @@ public class TestBullet extends Bullet{
     */
     public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray,
     int wallHitBoxX, int wallHitBoxY) {
-        //the first two lines are for testing
-        testingSquare = wallHitBox;
-        testSquare = true;
         if (hitBox.intersects(wallHitBox)) { //tests if the two hitboxes really intercept
             if (bounceCount <= 0) { //deletes the bullet if it has no bounces
                 bulletDisappear();
@@ -155,15 +153,7 @@ public class TestBullet extends Bullet{
             }
         }
     }
-    
-    /**
-    * collisionWithEntity
-    * what happens when the bullet collides with an entity
-    */
-    public void collisionWithEntity() {
-        bulletDisappear();
-    }
-    
+
     /**
     * bulletDisappear
     * responsible for what happens when the bullet disappears or "dies"
@@ -172,6 +162,24 @@ public class TestBullet extends Bullet{
         bulletList.remove(this);
     }
 
+    /**
+    * damagePlayer
+    * what the bullet does when the bullet hits the player
+    * @param player - the player to damage
+    */
+    public void damageEntity(Entity entity) {
+        entity.takeDamage(this);
+        if (pierceCount > 0) {
+            pierceCount--;
+        } else {
+            bulletDisappear();
+        }
+    }
+
+    /**
+    * bulletDisappear
+    * responsible for what happens when the bullet disappears or "dies"
+    */
     public TestBullet returnSelf(double x, double y, double velocityX, double velocityY) {
         return new TestBullet(bulletList);
     }

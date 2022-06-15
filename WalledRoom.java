@@ -8,8 +8,8 @@
 
 public class WalledRoom extends Room {
   
-  public WalledRoom(double x, double y) {
-    super(x,y,15,8);
+  public WalledRoom(double x, double y, Player player) {
+    super(x,y,15,8, player);
   }
   
   protected void generateRoomWalls() {

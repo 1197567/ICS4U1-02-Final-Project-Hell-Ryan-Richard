@@ -34,10 +34,10 @@ public class TestSquareBullet extends Bullet{
     */
     public TestSquareBullet(ArrayList<Bullet> bulletList) {
         super(100, 100, 8, 10, 5, 0, 
-        0, 1, 20, 40, 0, 
-        999, 1, false, 
+        0, 15, 20, 40, 999, 
+        999, 1, true, 
         bulletList, new Rectangle(90, 80, 20, 40), 
-        "TestSquareBulletImageTest.png", 0, 0);
+        "TestSquareBulletImageTest.png", 0, 0, "TestSquareBullet");
     }
     
     
@@ -49,9 +49,6 @@ public class TestSquareBullet extends Bullet{
     */
     public void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray, 
     int wallHitBoxX, int wallHitBoxY) {
-        //the first two lines are for testing
-        testingSquare = wallHitBox;
-        testSquare = true;
         if (hitBox.intersects(wallHitBox)) { //tests if the two hitboxes really intercept
             if (bounceCount <= 0) { //deletes the bullet if it has no bounces
                 bulletDisappear();
@@ -157,12 +154,17 @@ public class TestSquareBullet extends Bullet{
         }
     }
     
-    public void collisionWithEntity() {
-        bulletDisappear();
-    }
-    
     public void bulletDisappear() {
         bulletList.remove(this);
+    }
+
+    public void damageEntity(Entity entity) {
+        entity.takeDamage(this);
+        if (pierceCount > 0) {
+            pierceCount--;
+        } else {
+            bulletDisappear();
+        }
     }
 
     public TestSquareBullet returnSelf(double x, double y, double velocityX, double velocityY) {

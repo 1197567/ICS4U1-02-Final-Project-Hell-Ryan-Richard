@@ -8,8 +8,8 @@
 
 public class DottedRoom extends Room {
   
-  public DottedRoom(double x, double y) {
-    super(x,y,9,9);
+  public DottedRoom(double x, double y, Player player) {
+    super(x,y,9,9,player);
   }
   
   protected void generateRoomWalls() {

@@ -14,19 +14,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;  
 import java.awt.event.MouseMotionListener;
 
-public class Player{
+public class Player implements Entity{
     
     /*Variables*/
     private double x;
     private double y;
     private double health;
+    private double maxHealth;
     private double velocityX;
     private double velocityY;
     private double aimAngle;
     private double aimArrowX;
     private double aimArrowY;
     private Room presentRoom;
-    private BufferedImage[] mainCharacterSprite = new BufferedImage[10];;
+    private BufferedImage[] mainCharacterSprite = new BufferedImage[12];;
     private BufferedImage aimArrow;
     private BufferedImage aimArrowOriginal;
     private Rectangle hitBox;
@@ -38,6 +39,10 @@ public class Player{
     private boolean[] keyDown = new boolean[]{false, false, false, false};
     private boolean[] lastKeyDown = new boolean[]{false, false};
     private int bulletCountDown = 0;
+    private int hitCountDown = 0;
+    private int killCountDown = 0;
+    private int deathCountDown = 27;
+    private boolean alive = true;
     private boolean shooting = false;
     
     /*Constructer*/  
@@ -45,11 +50,12 @@ public class Player{
         this.x=x;
         this.y=y;
         this.health=health;
+        maxHealth = health;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
         this.hitBox = new Rectangle((int) x, (int) y, 27,35);
         
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 12; i++) {
             try{
                 mainCharacterSprite[i] = ImageIO.read(new File("Resources/Main_Character" + i + ".png"));
             }catch(Exception e){
@@ -65,17 +71,87 @@ public class Player{
     }
     
     public void draw(Graphics g) {
-        if (aimAngle < Math.PI) {
-            g.drawImage(mainCharacterSprite[0], (int) (x - 4), (int) (y - 4), null);
+        if (alive) {
+            double heightCorrection = Math.round(Math.sin(BulletHellMain.getGameCounter()/9)*1.4);
+            if (aimAngle < Math.PI) {
+                if (hitCountDown > 0) {
+                    if (hitCountDown%4 > 2) {
+                        g.drawImage(mainCharacterSprite[10], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    } else {
+                        g.drawImage(mainCharacterSprite[3], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    }
+                } else if (killCountDown > 0) {
+                    g.drawImage(mainCharacterSprite[4], (int) (x - 2), 
+                    (int) (y + heightCorrection - 4), null);
+                } else if ((!keyDown[0]) && (!keyDown[1]) && (!keyDown[2]) && (!keyDown[3])) {
+                    if (BulletHellMain.getGameCounter()%80 > 60) {
+                        g.drawImage(mainCharacterSprite[2], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    } else if ((BulletHellMain.getGameCounter()%80 > 20) && 
+                    (BulletHellMain.getGameCounter()%80 < 40)) {
+                        g.drawImage(mainCharacterSprite[1], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    } else {
+                        g.drawImage(mainCharacterSprite[0], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    }
+                } else {
+                    g.drawImage(mainCharacterSprite[0], (int) (x - 2), (int) (y + heightCorrection - 4), null);
+                }
+            } else {
+                if (hitCountDown > 0) {
+                    if (hitCountDown%4 > 2) {
+                        g.drawImage(mainCharacterSprite[11], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    } else {
+                        g.drawImage(mainCharacterSprite[8], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    }
+                } else if (killCountDown > 0) {
+                    g.drawImage(mainCharacterSprite[9], (int) (x - 2), 
+                    (int) (y + heightCorrection - 4), null);
+                } else if ((!keyDown[0]) && (!keyDown[1]) && (!keyDown[2]) && (!keyDown[3])) {
+                    if (BulletHellMain.getGameCounter()%80 > 60) {
+                        g.drawImage(mainCharacterSprite[7], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    } else if ((BulletHellMain.getGameCounter()%80 > 20) && 
+                    (BulletHellMain.getGameCounter()%80 < 40)) {
+                        g.drawImage(mainCharacterSprite[6], (int) (x - 2),
+                        (int) (y + heightCorrection - 4), null);
+                    } else {
+                        g.drawImage(mainCharacterSprite[5], (int) (x - 2), 
+                        (int) (y + heightCorrection - 4), null);
+                    }
+                } else {
+                    g.drawImage(mainCharacterSprite[5], (int) (x - 2), (int) 
+                    (y + heightCorrection - 4), null);
+                }
+            }
+            
+            g.drawImage(aimArrow, (int) aimArrowX - aimArrow.getWidth()/2,
+            (int) aimArrowY - aimArrow.getHeight()/2, null);
+            
+            g.drawRect((int) hitBox.getX(), 
+            (int) hitBox.getY(), 
+            (int) hitBox.getWidth(), 
+            (int) hitBox.getHeight());
         } else {
-            g.drawImage(mainCharacterSprite[5], (int) (x - 4), (int) (y - 4), null);
+            deathCountDown--;
+            if (deathCountDown%5 > 3) {
+                if (aimAngle < Math.PI) {
+                    g.drawImage(mainCharacterSprite[3], (int) (x - 2), 
+                    (int) (y - 4), null);
+                } else {
+                    g.drawImage(mainCharacterSprite[8], (int) (x - 2), 
+                    (int) (y - 4), null);
+                }
+            }
+            if (deathCountDown <= 0 ) {
+                BulletHellMain.characterDeath();
+            }
         }
-        g.drawImage(aimArrow, (int) aimArrowX - aimArrow.getWidth()/2,
-        (int) aimArrowY - aimArrow.getHeight()/2, null);
-        g.drawRect((int) hitBox.getX(), 
-        (int) hitBox.getY(), 
-        (int) hitBox.getWidth(), 
-        (int) hitBox.getHeight());
     }
     
     public void shootBullet() {
@@ -88,12 +164,44 @@ public class Player{
     
     public void shootingBullet() {
         if (bulletCountDown > 0) {
-            bulletCountDown --;
+            bulletCountDown--;
+        }
+        if (killCountDown > 0) {
+            killCountDown--;
+        }
+        if (hitCountDown > 0) {
+            hitCountDown --;
         }
         if ((shooting) && (bulletCountDown <= 0)) {
             shootBullet();
             bulletCountDown = bulletType.getBulletInterval();
         }
+    }
+    
+    public void takeDamage(Bullet bullet) {
+        hitCountDown = 20;
+        health -= bullet.getDamage();
+        if (health <= 0) {
+            alive = false;
+            double deathAngle = Math.atan2(bullet.getVelocityY(), bullet.getVelocityX());
+            velocityX = Math.cos(deathAngle);
+            velocityY = Math.sin(deathAngle);
+        }
+    }
+    
+    public void takeDamage(double damage) {
+        hitCountDown = 20;
+        health -= damage;
+        if (health <= 0) {
+            alive = false;
+            double deathAngle = Math.atan2(velocityY, velocityX);
+            velocityX = Math.cos(deathAngle);
+            velocityY = Math.sin(deathAngle);
+        }
+    }
+    
+    public void kill() {
+        killCountDown = 10; 
     }
     
     public void move() {
@@ -235,6 +343,14 @@ public class Player{
         return health;
     }
     
+    public void setMaxHealth(double maxHealth){
+        this.maxHealth=maxHealth;
+    }
+    
+    public double getMaxHealth(){
+        return maxHealth;
+    }
+    
     public void setVelocityX(double velocityX){
         this.velocityX=velocityX;
     }
@@ -251,10 +367,15 @@ public class Player{
         return velocityY;
     }
     
+    public Rectangle getHitBox() {
+        return hitBox;
+    }
+    
     public void setPresentRoom(Room presentRoom){
         this.presentRoom=presentRoom;
-        this.bulletType = new PlayerBasicBullet(x, y, 0, 0, 
-        presentRoom.getBulletList());
+        bulletType = new PlayerBasicBullet(x, y, 0, 0, 
+        this.presentRoom.getBulletList());
+        this.presentRoom.setWeapon(bulletType);
     }
     
     public Room getPresentRoom(){
@@ -277,6 +398,10 @@ public class Player{
         return keyDown;
     }
     
+    public int getHitCountDown() {
+        return hitCountDown;
+    }
+    
     class PlayerKeyListener implements KeyListener{
         /*Methods*/
         public void keyTyped(KeyEvent e){
@@ -284,18 +409,19 @@ public class Player{
         
         public void keyPressed(KeyEvent e){
             int keyCode = e.getKeyCode();
-            
-            if(keyCode==KeyEvent.VK_W){
-                keyDown[0] = true;
-            }
-            if(keyCode==KeyEvent.VK_S){
-                keyDown[1] = true;
-            }
-            if(keyCode==KeyEvent.VK_A){
-                keyDown[2] = true;
-            }
-            if(keyCode==KeyEvent.VK_D){
-                keyDown[3] = true;
+            if (alive) {
+                if(keyCode==KeyEvent.VK_W){
+                    keyDown[0] = true;
+                }
+                if(keyCode==KeyEvent.VK_S){
+                    keyDown[1] = true;
+                }
+                if(keyCode==KeyEvent.VK_A){
+                    keyDown[2] = true;
+                }
+                if(keyCode==KeyEvent.VK_D){
+                    keyDown[3] = true;
+                }
             }
         }
         
@@ -324,7 +450,9 @@ public class Player{
         }
         
         public void mousePressed(MouseEvent e){
-            shooting = true;
+            if (alive) {
+                shooting = true;
+            }
         }
         
         
@@ -343,14 +471,18 @@ public class Player{
     
     class PlayerMouseMotionListener implements MouseMotionListener{
         public void mouseMoved(MouseEvent e){
-            aimAngle = -(Math.atan2(e.getX() - (x - mainCharacterSprite[0].getWidth()/2 + 30)
-            , e.getY() - (y - mainCharacterSprite[0].getHeight()/2 + 39))) + Math.PI;
-            aimArrow = rotateAimArrow(aimArrowOriginal, aimAngle);
+            if (alive) {
+                aimAngle = -(Math.atan2(e.getX() - (x - mainCharacterSprite[0].getWidth()/2 + 30)
+                , e.getY() - (y - mainCharacterSprite[0].getHeight()/2 + 39))) + Math.PI;
+                aimArrow = rotateAimArrow(aimArrowOriginal, aimAngle);
+            }
         }
         public void mouseDragged(MouseEvent e){
-            aimAngle = -(Math.atan2(e.getX() - (x - mainCharacterSprite[0].getWidth()/2 + 30)
-            , e.getY() - (y - mainCharacterSprite[0].getHeight()/2 + 39))) + Math.PI;
-            aimArrow = rotateAimArrow(aimArrowOriginal, aimAngle);
+            if (alive) {
+                aimAngle = -(Math.atan2(e.getX() - (x - mainCharacterSprite[0].getWidth()/2 + 30)
+                , e.getY() - (y - mainCharacterSprite[0].getHeight()/2 + 39))) + Math.PI;
+                aimArrow = rotateAimArrow(aimArrowOriginal, aimAngle);
+            }
         }         
     } 
 }
