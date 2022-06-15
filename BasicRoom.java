@@ -20,7 +20,7 @@ public class BasicRoom extends Room {
     
     
     public BasicRoom(double x, double y, Player player) {
-        super(x,y,40,40, player);
+        super(x,y,10,10, player);
     }
     
     protected void generateRoomWalls() {
@@ -35,7 +35,8 @@ public class BasicRoom extends Room {
         
         //generateWall(4, 4);
         generateWall(6, 5);
+        generateDoor(1,9, 0);
         //generateWall(7, 3);
-        
+        enemyList.add(new Chocolate(100, 100, 0.2, 0.2, this));
     }
 }

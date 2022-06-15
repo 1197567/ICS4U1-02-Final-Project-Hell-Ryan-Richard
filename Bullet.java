@@ -12,7 +12,6 @@ import java.awt.geom.Area;
 import java.awt.geom.AffineTransform;
 import java.awt.Shape;
 import java.awt.Rectangle;
-import java.awt.Color;
 import java.util.ArrayList; 
 import java.awt.image.BufferedImage; 
 import javax.imageio.ImageIO;
@@ -34,7 +33,7 @@ public abstract class Bullet{
     protected int pierceCount;
     protected int bounceCount;
     protected double bounceModifier;
-    protected boolean hostileToPlayer;
+    private boolean hostileToPlayer;
     protected double appearingTime = 0;
     protected Area hitBox;
     protected ArrayList<Bullet> bulletList;
@@ -45,9 +44,7 @@ public abstract class Bullet{
     protected AffineTransform bulletRotation = new AffineTransform();
     private int bulletInterval;
     private double accuracy;
-    boolean testSquare = false;
-    Rectangle testingSquare;
-    
+    private String name;
     
     /*
     * constructor of bullet
@@ -71,12 +68,15 @@ public abstract class Bullet{
     * @param rotationRadian - the amount the bullet is rotated in radians from (0,1) clockwise
     * @param imagePath - the path of the image represented by an image
     * @param hostileToPlayer - boolean indicating whether the bullet can hit the player
+    * @param bulletInterval - amount of time before this bullet can be shot again
+    * @param accuracy - modifier affecting the accuracy of the aiming
+    * @param name - the name of the gun that shoots this bullet
     */
     public Bullet(double x, double y, double velocityX, double velocityY, double maxVelocity,
     double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
     int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 
     ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath, int bulletInterval,
-    double accuracy) {
+    double accuracy, String name) {
         //points are stored to make rotation easier
         this.points = new double[][]{new double[]{x - sizeX/2,y - sizeY/2}, 
         new double[]{x + sizeX/2,y - sizeY/2}, 
@@ -105,6 +105,7 @@ public abstract class Bullet{
         this.bulletTransform.setToTranslation(velocityX, velocityY);
         this.bulletInterval = bulletInterval;
         this.accuracy = accuracy;
+        this.name = name;
         try {
             bulletImageOriginal = ImageIO.read(new File("resources/" + imagePath)); 
         } catch (Exception e) {
@@ -143,14 +144,12 @@ public abstract class Bullet{
     */
     public void draw(double addedX, double addedY, Graphics g) {
         //bulletImage = rotateBullet(bulletImage, Math.toRadians(counter += 0.01));
-        //g.drawImage(bulletImage, (int) points[0][0], (int) points[0][1], null);
+        //g.drawImage(bulletImage, (int) points[0][0], (int) points[0][1], null)
         g.drawImage(bulletImage, 
         (int) ((points[0][0] + points[3][0])/2 - (sizeX/2) - (bulletImage.getWidth() - sizeX)/2 + addedX), 
         (int) ((points[0][1] + points[3][1])/2 - (sizeY/2) - (bulletImage.getHeight() - sizeY)/2 + addedY)
         ,null);
-        
-        g.setColor(Color.GREEN);
-        
+        /* 
         int[] pointsIntX = new int[4];
         int[] pointsIntY = new int[4];
         pointsIntX[0] = (int) points[0][0];
@@ -161,28 +160,20 @@ public abstract class Bullet{
         pointsIntY[2] = (int) points[3][1];
         pointsIntX[3] = (int) points[2][0];
         pointsIntY[3] = (int) points[2][1];
-        
-        g.drawPolygon(pointsIntX, pointsIntY, 4);
-         /* 
-        g.drawRect((int) hitBox.getBounds().getX(), (int) hitBox.getBounds().getY(), 
-        (int) hitBox.getBounds().getWidth(), (int) hitBox.getBounds().getHeight());
         */
-        if (testSquare) { //for testing purposes
-            g.fillRect((int) testingSquare.getX(), (int) testingSquare.getY(), 50, 50);
-        }
-        testSquare = false;
     }
     
     public abstract void collisionWithWall(Rectangle wallHitBox, Rectangle[][] hitBoxArray,
     int wallHitBoxX, int wallHitBoxY);
     
-    public abstract void collisionWithEntity();
-    
     public abstract void bulletDisappear();
-    
+
+    public abstract void damageEntity(Entity entity);
+
     /**
     * @return double return the points
     */
+    
     public double[][] getPoints() {
         return points;
     }
@@ -245,14 +236,14 @@ public abstract class Bullet{
     /**
     * @return double return the velocityX
     */
-    public double getvelocityX() {
+    public double getVelocityX() {
         return velocityX;
     }
     
     /**
     * @param velocityX the velocityX to set
     */
-    public void setvelocityX(double velocityX) {
+    public void setVlocityX(double velocityX) {
         this.velocityX = velocityX;
     }
     
@@ -395,6 +386,20 @@ public abstract class Bullet{
     public void setBounceModifier(double bounceModifier) {
         this.bounceModifier = bounceModifier;
     }
+
+    /**
+    * @return double return the hostileToPlayer
+    */
+    public boolean getHostileToPlayer() {
+        return hostileToPlayer;
+    }
+    
+    /**
+    * @param hostileToPlayer the hostileToPlayer to set
+    */
+    public void setHostileToPlayer(boolean hostileToPlayer) {
+        this.hostileToPlayer = hostileToPlayer;
+    }
     
     /**
     * @return double return the hitBox
@@ -442,4 +447,17 @@ public abstract class Bullet{
         return accuracy;
     }
 
+    /**
+     * @return String return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 }

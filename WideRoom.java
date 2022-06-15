@@ -8,8 +8,8 @@
 
 public class WideRoom extends Room {
   
-  public WideRoom(double x, double y) {
-    super(x,y,6,10);
+  public WideRoom(double x, double y, Player player) {
+    super(x,y,6,10,player);
   }
   
   protected void generateRoomWalls() {

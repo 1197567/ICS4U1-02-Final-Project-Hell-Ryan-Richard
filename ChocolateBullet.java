@@ -8,21 +8,24 @@
 
 import java.util.ArrayList; 
 import java.awt.Rectangle;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.AffineTransform;
 
-public class PlayerBasicBullet extends DisappearingBullet {
+public class ChocolateBullet extends Bullet {
     
-
-
-    public PlayerBasicBullet(double x, double y, double velocityX, double velocityY, 
+    
+    /*(double x, double y, double velocityX, double velocityY, double maxVelocity,
+    double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
+    int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 
+    ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath, int bulletInterval,
+    double accuracy, String name) */
+    public ChocolateBullet(double x, double y, double velocityX, double velocityY, 
     ArrayList<Bullet> bulletList) {
-        super(x,y, velocityX, velocityY, 10, 0, 0, 1,  
-        6, 6, 0, 1, 1, false, 
-        bulletList, new Ellipse2D.Double(x - 3, y - 3, 6, 6), "PlayerBasicBullet.png",
-        9, 0.05, "Peashooter", 350);
+        super(x,y, velocityX, velocityY, 1.5, 0, 0, 1, 
+         22, 22, 0, 0, 0, true, 
+        bulletList, new Rectangle((int) (x - 11),(int) (y - 11), 22, 22), "PlayerBasicBullet.png",
+        15, 0.1, "Peashooter");
     }
-
+    
     /*
     * collisionWithWall
     * method responsible for detecting collision between this bullet and a wall 
@@ -140,7 +143,7 @@ public class PlayerBasicBullet extends DisappearingBullet {
     public void bulletDisappear() {
         bulletList.remove(this);
     }
-
+    
     /**
     * damagePlayer
     * damages the player
@@ -155,9 +158,9 @@ public class PlayerBasicBullet extends DisappearingBullet {
         }
     }
     
-
+    
     public PlayerBasicBullet returnSelf(double x, double y, double velocityX, double velocityY) {
         return new PlayerBasicBullet(x, y, velocityX, velocityY, bulletList);
     }
-
+    
 }
