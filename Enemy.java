@@ -46,7 +46,8 @@ public abstract class Enemy implements Entity{
     this.name=name;
     this.health=health;
     this.hitBox = hitBox;
-    this.bulletInterval = bulletInterval;
+    this.bulletInterval = (int)  (
+      bulletInterval + bulletInterval*Math.random()*0.5 - bulletInterval*0.5);
     this.presentRoom = presentRoom;
     this.meleeDamage = meleeDamage;
     try{

@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
 import javax.swing.JLabel;
-
 import java.awt.Font;
 import java.awt.Color;
 

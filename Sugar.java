@@ -26,6 +26,7 @@ public class Sugar extends Enemy{
   }
 
   public void fireBullet() {
+    /* */
     double aimAngle = 2*Math.PI*Math.random();
     if (enemyQueue.size() > 3)  {
       presentRoom.getEnemyList().add(enemyQueue.poll());

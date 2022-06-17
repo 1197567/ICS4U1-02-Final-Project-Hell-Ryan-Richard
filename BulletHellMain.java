@@ -12,11 +12,12 @@ import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.BorderLayout;
-import javax.swing.JTextField;
+import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 
 public class BulletHellMain{
     
@@ -30,7 +31,7 @@ public class BulletHellMain{
     public static void main(String[] args){
         
         gameWindow = new JFrame("Bullet_Hell"); //create JFrame
-        Player player = new Player(400 - 13.5, 300 - 17.5, 100,15, 15);
+        Player player = new Player(400 - 13.5, 300 - 17.5, 100,6, 6);
         room = new BossRoom(0,0, player); 
         player.setPresentRoom(room);
 
@@ -41,6 +42,7 @@ public class BulletHellMain{
         gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameWindow.setVisible(true);
         gameWindow.setResizable(false);
+        gameWindow.setIconImage(player.getSprites()[3]);
         gameWindow.pack();
         runGameLoop(); //loop keepa game running 
     }
@@ -77,7 +79,8 @@ public class BulletHellMain{
         JPanel deathPanel = new JPanel();
         deathPanel.setLayout(new BorderLayout());
         Font deathFont = new Font("Comic Sans MS", Font.PLAIN, 40);
-        JTextField deathText = new JTextField("GAME OVER");
+        JLabel deathText = new JLabel("GAME OVER", 
+        new ImageIcon(room.getPlayer().getSprites()[4]), 0);
         JButton tryAgainButton = new JButton("Try Again");
         tryAgainButton.addActionListener(new ActionListener(){  
             public void actionPerformed(ActionEvent e){  
@@ -90,7 +93,7 @@ public class BulletHellMain{
                     room.requestFocusInWindow();
                     }  
                 });  
-        deathText.setHorizontalAlignment(JTextField.CENTER);
+        deathText.setHorizontalAlignment(JLabel.CENTER);
         deathText.setFont(deathFont);
         deathPanel.setBackground(Color.WHITE);
         gameWindow.remove(room);

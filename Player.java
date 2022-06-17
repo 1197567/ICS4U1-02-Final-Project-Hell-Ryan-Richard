@@ -433,6 +433,9 @@ public class Player implements Entity{
         return hitCountDown;
     }
     
+    public BufferedImage[] getSprites() {
+        return mainCharacterSprite;
+    }
     class PlayerKeyListener implements KeyListener{
         /*Methods*/
         public void keyTyped(KeyEvent e){

@@ -21,10 +21,8 @@ public class Cookie extends Enemy{
     
     public Cookie(double x, double y ,double velocityX, double velocityY, Room presentRoom){
         super(x,y, velocityX, velocityY, 100, 100, "Cookie",
-        1, new Rectangle((int) x,(int) y,100,100), 
+        1000, new Rectangle((int) x,(int) y,100,100), 
         "Cookie.png", 1500, presentRoom, 25);
-        
-        
     }
     
     public void fireBullet() {
@@ -78,32 +76,64 @@ public class Cookie extends Enemy{
             }
             
             for (int i = 0; i < chocolateList.length; i++) {
+                
                 if (chocolateList[i] != null) {
-                    chocolateList[i].setVelocityX((((x + 50) + Math.cos(Math.PI*((i*1.0 + 1)/chocolateList.length) + 
-                    aimAngle - Math.PI/2)*200 - 10) - chocolateList[i].getX())/10);
+                    double neededVelocityX = (((x + 50) + Math.cos(Math.PI*((i*1.0 + 1)/chocolateList.length) + 
+                    aimAngle - Math.PI/2)*200 - 10) - chocolateList[i].getX())/10;
+                    double neededVelocityY = (((y + 50) + Math.sin(Math.PI*((i*1.0 + 1)/chocolateList.length) + 
+                    aimAngle - Math.PI/2)*200 - 15) - chocolateList[i].getY())/10;
                     
-                    chocolateList[i].setVelocityY((((y + 50) + Math.sin(Math.PI*((i*1.0 + 1)/chocolateList.length) + 
-                    aimAngle - Math.PI/2)*200 - 15) - chocolateList[i].getY())/10);
+                    if (i%2 == 0) {
+                        chocolateList[i].setVelocityX(neededVelocityX);
+                        chocolateList[i].setVelocityY(neededVelocityY);
+                    } else {
+                        chocolateList[i].setVelocityX(neededVelocityX);
+                        chocolateList[i].setVelocityY(neededVelocityY);
+                    }
+                    if (Math.sqrt(neededVelocityX*neededVelocityX + neededVelocityY*neededVelocityY)
+                    < 2.5) {
+                        chocolateList[i].setMeleeDamage(25);
+                    } else {
+                        chocolateList[i].setMeleeDamage(0);
+                    }
+                    
                     if (chocolateList[i].getHealth() <= 0) {
                         chocolateList[i].takeDamage(1);
                         chocolateList[i] = null;
                         removeNull(chocolateList);
                     }
+                } else {
+                    i = chocolateList.length;
                 }
+                
             }
             for (int i = 0; i < lolipopList.length; i++) {
+                double neededVelocityX;
+                double neededVelocityY;
                 if (lolipopList[i] != null) {
-                    lolipopList[i].setVelocityX((((x + 50) + Math.cos(Math.PI*((i*1.0 + 1)/lolipopList.length) + 
-                    aimAngle - Math.PI/2)*75 - 10) - lolipopList[i].getX())/10);
+                    neededVelocityX = (((x + 50) + Math.cos(Math.PI*((i*1.0 + 1)/lolipopList.length) + 
+                    aimAngle - Math.PI/2)*75 - 10) - lolipopList[i].getX());
+                    neededVelocityY = (((y + 50) + Math.sin(Math.PI*((i*1.0 + 1)/lolipopList.length) + 
+                    aimAngle - Math.PI/2)*75 - 15) - lolipopList[i].getY());
+                    lolipopList[i].setVelocityX(neededVelocityX);
                     
-                    lolipopList[i].setVelocityY((((y + 50) + Math.sin(Math.PI*((i*1.0 + 1)/lolipopList.length) + 
-                    aimAngle - Math.PI/2)*75 - 15) - lolipopList[i].getY())/10);
+                    lolipopList[i].setVelocityY(neededVelocityY);
+                    if (Math.sqrt(neededVelocityX*neededVelocityX + neededVelocityY*neededVelocityY)
+                    < 2.5) {
+                        lolipopList[i].setMeleeDamage(25);
+                    } else {
+                        lolipopList[i].setMeleeDamage(0);
+                    }
                     if (lolipopList[i].getHealth() <= 0) {
                         lolipopList[i].takeDamage(1);
                         lolipopList[i] = null;
                         removeNull(lolipopList);
                     }
+                    
+                } else {
+                    i = lolipopList.length;
                 }
+                
             }
             sort(chocolateList, 0, findEnemyNull(chocolateList)- 1);
             sort(lolipopList, 0, findEnemyNull(lolipopList) - 1);

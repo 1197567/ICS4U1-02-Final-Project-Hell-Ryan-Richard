@@ -12,7 +12,6 @@ import java.awt.geom.AffineTransform;
 
 public class ChocolateBullet extends DisappearingBullet {
     
-    
     /*(double x, double y, double velocityX, double velocityY, double maxVelocity,
     double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
     int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 

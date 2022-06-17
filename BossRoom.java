@@ -8,6 +8,8 @@
 
 import java.awt.Graphics;
 import java.awt.Color;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 public class BossRoom extends Room {
     
@@ -22,10 +24,17 @@ public class BossRoom extends Room {
     */
     Cookie cookie;
     double maxHealth;
-    
+    private JLabel textFieldBossHealth;
     
     public BossRoom(double x, double y, Player player) {
         super(x,y,52,52, player);
+        Font displayFont = new Font("Comic Sans MS", Font.PLAIN, 20);
+
+        textFieldBossHealth = new JLabel("Boss Health");
+        textFieldBossHealth.setBounds(0,120, 300, 30);
+        textFieldBossHealth.setFont(displayFont);
+        this.add(textFieldBossHealth);
+        revalidate();
     }
     
     protected void generateRoomWalls() {
@@ -44,7 +53,7 @@ public class BossRoom extends Room {
             generateWall(7 + i, 44);
             generateWall(33 + i, 44);
         }
-
+        
         for (int i = 1; i < 12; i++) {
             generateWall(7, 7 + i);
             generateWall(7, 33 + i);
@@ -59,13 +68,13 @@ public class BossRoom extends Room {
         }
         for (int i = 1; i < 50; i++) {
             enemyList.add(new Chocolate(100, 50*i + 50, 0, 1, this));
-            enemyList.add(new Chocolate(100, 50*i + 50, 0, -1, this));
+            //enemyList.add(new Chocolate(100, 50*i + 50, 0, -1, this));
             enemyList.add(new Chocolate(2450, 50*i + 50, 0, 1, this));
-            enemyList.add(new Chocolate(2450, 50*i + 50, 0, -1, this));
+            //enemyList.add(new Chocolate(2450, 50*i + 50, 0, -1, this));
             enemyList.add(new Chocolate(50*i + 50, 100, 1, 0, this));
-            enemyList.add(new Chocolate(50*i + 50, 100, -1, 0, this));
+            //enemyList.add(new Chocolate(50*i + 50, 100, -1, 0, this));
             enemyList.add(new Chocolate(50*i + 50, 2450, 1, 0, this));
-            enemyList.add(new Chocolate(50*i + 50, 2450, -1, 0, this));
+            //enemyList.add(new Chocolate(50*i + 50, 2450, -1, 0, this));
         }
         enemyList.add(new Sugar(9*50, 9*50, 0, 0, this));
         enemyList.add(new Sugar(9*50, 41*50, 0, 0, this));
@@ -76,17 +85,17 @@ public class BossRoom extends Room {
         enemyList.add(cookie);
         
     }
-
+    
     @Override
     protected void drawHealthBar(Graphics g) {
         g.setColor(Color.RED);
         g.fillRect(0,25, 200, 25);
         g.setColor(Color.GREEN);
         g.fillRect(0,25, (int) (200.0*(player.getHealth()/player.getMaxHealth())), 25);
-
+        
         g.setColor(Color.RED);
-        g.fillRect(0,100, 200, 25);
+        g.fillRect(0,125, 200, 25);
         g.setColor(Color.GREEN);
-        g.fillRect(0,100, (int) (200.0*(cookie.getHealth()/maxHealth)), 25);
-      }
+        g.fillRect(0,125, (int) (200.0*(cookie.getHealth()/maxHealth)), 25);
+    }
 }
