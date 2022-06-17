@@ -8,6 +8,7 @@ import java.io.File;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;  
@@ -31,7 +32,8 @@ public class Player implements Entity{
     private BufferedImage aimArrow;
     private BufferedImage aimArrowOriginal;
     private Rectangle hitBox;
-    private Bullet bulletType;
+    private Bullet primaryBulletType;
+    private Bullet secondaryBulletType;
     private PlayerKeyListener keyListener = new PlayerKeyListener();
     private PlayerMouseListener mouseListener = new PlayerMouseListener();
     private PlayerMouseMotionListener mouseMotionListener = new PlayerMouseMotionListener();
@@ -44,6 +46,7 @@ public class Player implements Entity{
     private int deathCountDown = 27;
     private boolean alive = true;
     private boolean shooting = false;
+    private int clickCoolDown = 0;
     
     /*Constructer*/  
     public Player(double x, double y,int health,double velocityX, double velocityY){
@@ -68,6 +71,7 @@ public class Player implements Entity{
             System.out.println("COULD NOT FIND FILEPATH FOR AIM ARROW ");
         }
         aimArrow = rotateAimArrow(aimArrowOriginal, 0);
+        
     }
     
     public void draw(Graphics g) {
@@ -132,11 +136,19 @@ public class Player implements Entity{
             
             g.drawImage(aimArrow, (int) aimArrowX - aimArrow.getWidth()/2,
             (int) aimArrowY - aimArrow.getHeight()/2, null);
-            
+            /* 
             g.drawRect((int) hitBox.getX(), 
             (int) hitBox.getY(), 
             (int) hitBox.getWidth(), 
             (int) hitBox.getHeight());
+            */
+            g.setColor(Color.BLACK);
+            if ((primaryBulletType.getBulletInterval() > 49) && 
+            (bulletCountDown > 0)) {
+                g.drawArc((int) (x - 23), (int) (y - 19), 75, 75, 90, 
+                (int) -(360*((1.0*primaryBulletType.getBulletInterval() - bulletCountDown)
+                /primaryBulletType.getBulletInterval())));
+            }
         } else {
             deathCountDown--;
             if (deathCountDown%5 > 3) {
@@ -155,11 +167,11 @@ public class Player implements Entity{
     }
     
     public void shootBullet() {
-        double accuracyCorrection = ((Math.random()*2*aimAngle - aimAngle)*bulletType.getAccuracy());
-        presentRoom.getBulletList().add(bulletType.returnSelf(hitBox.getCenterX(), 
-        hitBox.getCenterY(), Math.cos((aimAngle + accuracyCorrection) + -Math.PI/2)*bulletType.getMaxVelocity(),
-        Math.sin((aimAngle + accuracyCorrection) -Math.PI/2)*bulletType.getMaxVelocity()));
-        bulletCountDown = bulletType.getBulletInterval();
+        double accuracyCorrection = ((Math.random()*2*aimAngle - aimAngle)*primaryBulletType.getAccuracy());
+        presentRoom.getBulletList().add(primaryBulletType.returnSelf(hitBox.getCenterX(), 
+        hitBox.getCenterY(), Math.cos((aimAngle + accuracyCorrection) + -Math.PI/2)*primaryBulletType.getMaxVelocity(),
+        Math.sin((aimAngle + accuracyCorrection) -Math.PI/2)*primaryBulletType.getMaxVelocity()));
+        bulletCountDown = primaryBulletType.getBulletInterval();
     }
     
     public void shootingBullet() {
@@ -174,29 +186,33 @@ public class Player implements Entity{
         }
         if ((shooting) && (bulletCountDown <= 0)) {
             shootBullet();
-            bulletCountDown = bulletType.getBulletInterval();
+            bulletCountDown = primaryBulletType.getBulletInterval();
         }
     }
     
     public void takeDamage(Bullet bullet) {
-        hitCountDown = 20;
         health -= bullet.getDamage();
-        if (health <= 0) {
-            alive = false;
-            double deathAngle = Math.atan2(bullet.getVelocityY(), bullet.getVelocityX());
-            velocityX = Math.cos(deathAngle);
-            velocityY = Math.sin(deathAngle);
+        if (bullet.getDamage() > 0) {
+            hitCountDown = 20;
+            if (health <= 0) {
+                alive = false;
+                double deathAngle = Math.atan2(bullet.getVelocityY(), bullet.getVelocityX());
+                velocityX = Math.cos(deathAngle);
+                velocityY = Math.sin(deathAngle);
+            }
         }
     }
     
     public void takeDamage(double damage) {
-        hitCountDown = 20;
         health -= damage;
-        if (health <= 0) {
-            alive = false;
-            double deathAngle = Math.atan2(velocityY, velocityX);
-            velocityX = Math.cos(deathAngle);
-            velocityY = Math.sin(deathAngle);
+        if (damage > 0) {
+            hitCountDown = 20;
+            if (health <= 0) {
+                alive = false;
+                double deathAngle = Math.atan2(velocityY, velocityX);
+                velocityX = Math.cos(deathAngle);
+                velocityY = Math.sin(deathAngle);
+            }
         }
     }
     
@@ -238,6 +254,9 @@ public class Player implements Entity{
                 //hitBox.setLocation((int) x, (int) y);
                 lastKeyDown[1] = false;
             }
+        }
+        if (clickCoolDown > 0) {
+            clickCoolDown--;
         }
     }
     
@@ -373,9 +392,21 @@ public class Player implements Entity{
     
     public void setPresentRoom(Room presentRoom){
         this.presentRoom=presentRoom;
-        bulletType = new PlayerBasicBullet(x, y, 0, 0, 
-        this.presentRoom.getBulletList());
-        this.presentRoom.setWeapon(bulletType);
+        primaryBulletType = new PlayerBasicBullet(x, y, 0, 0, presentRoom);
+        secondaryBulletType = new Tomato(x, y, 0, 0, presentRoom);
+        this.presentRoom.setPrimaryWeapon(primaryBulletType);
+        this.presentRoom.setSecondaryWeapon(secondaryBulletType);
+        this.presentRoom.addX(-900);
+        this.presentRoom.addY(-1600);
+        hitBox.setLocation((int) (hitBox.getX() + 900), 
+        (int) (hitBox.getY() + 1600));
+    }
+    
+    public void switchWeapons() {
+        Bullet tempBulletType = primaryBulletType;
+        primaryBulletType = secondaryBulletType;
+        secondaryBulletType = tempBulletType;
+        presentRoom.switchWeapons();
     }
     
     public Room getPresentRoom(){
@@ -446,18 +477,27 @@ public class Player implements Entity{
     class PlayerMouseListener implements MouseListener{
         
         public void mouseClicked(MouseEvent e){  
-            //MyMouseListener.mouseDown = true;
+            
         }
         
         public void mousePressed(MouseEvent e){
-            if (alive) {
-                shooting = true;
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                if (alive) {
+                    shooting = true;
+                }
+            } else if ((e.getButton() == MouseEvent.BUTTON3) && (clickCoolDown <= 0)) {
+                switchWeapons();
+                clickCoolDown = 5;
             }
         }
         
         
         public void mouseReleased(MouseEvent e){
-            shooting = false;
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                if (alive) {
+                    shooting = false;
+                }
+            }
         }
         
         

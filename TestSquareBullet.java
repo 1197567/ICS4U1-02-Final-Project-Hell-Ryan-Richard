@@ -8,7 +8,6 @@
 
 //import statements
 //this is the same thing as testBullet but with a different shape go read that for comments
-import java.util.ArrayList; 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
@@ -32,11 +31,11 @@ public class TestSquareBullet extends Bullet{
     * @param disappearDistance - distance bullet travels before disappearing
     * @param 
     */
-    public TestSquareBullet(ArrayList<Bullet> bulletList) {
+    public TestSquareBullet(Room presentRoom) {
         super(100, 100, 8, 10, 5, 0, 
         0, 15, 20, 40, 999, 
         999, 1, true, 
-        bulletList, new Rectangle(90, 80, 20, 40), 
+        presentRoom, new Rectangle(90, 80, 20, 40), 
         "TestSquareBulletImageTest.png", 0, 0, "TestSquareBullet");
     }
     
@@ -155,7 +154,7 @@ public class TestSquareBullet extends Bullet{
     }
     
     public void bulletDisappear() {
-        bulletList.remove(this);
+        presentRoom.getBulletList().remove(this);
     }
 
     public void damageEntity(Entity entity) {
@@ -168,7 +167,7 @@ public class TestSquareBullet extends Bullet{
     }
 
     public TestSquareBullet returnSelf(double x, double y, double velocityX, double velocityY) {
-        return new TestSquareBullet(bulletList);
+        return new TestSquareBullet(presentRoom);
     }
     
 }

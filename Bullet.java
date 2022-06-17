@@ -36,7 +36,7 @@ public abstract class Bullet{
     private boolean hostileToPlayer;
     protected double appearingTime = 0;
     protected Area hitBox;
-    protected ArrayList<Bullet> bulletList;
+    protected Room presentRoom;
     protected AffineTransform bulletTransform = new AffineTransform();
     protected ArrayList<Rectangle> wallCollided = new ArrayList<Rectangle>();
     protected BufferedImage bulletImage;
@@ -75,7 +75,7 @@ public abstract class Bullet{
     public Bullet(double x, double y, double velocityX, double velocityY, double maxVelocity,
     double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
     int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 
-    ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath, int bulletInterval,
+    Room presentRoom, Shape hitBoxShape, String imagePath, int bulletInterval,
     double accuracy, String name) {
         //points are stored to make rotation easier
         this.points = new double[][]{new double[]{x - sizeX/2,y - sizeY/2}, 
@@ -101,7 +101,7 @@ public abstract class Bullet{
         this.bounceModifier = bounceModifier;
         this.hostileToPlayer = hostileToPlayer;
         this.hitBox = new Area(hitBoxShape);
-        this.bulletList = bulletList;
+        this.presentRoom = presentRoom;
         this.bulletTransform.setToTranslation(velocityX, velocityY);
         this.bulletInterval = bulletInterval;
         this.accuracy = accuracy;
@@ -203,7 +203,7 @@ public abstract class Bullet{
         this.bulletTransform.setToTranslation(velocityX, velocityY);
     }
     
-    private BufferedImage rotateBullet(BufferedImage givenBulletImage, double angle) {
+    protected BufferedImage rotateBullet(BufferedImage givenBulletImage, double angle) {
         
         double centerX = (points[0][0] + points[3][0])/2;
         double centerY = (points[0][1] + points[3][1])/2;

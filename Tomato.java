@@ -5,21 +5,25 @@
 * @version 1.0
 * June 2022
 */
- 
+
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.AffineTransform;
 
-public class PlayerBasicBullet extends DisappearingBullet {
-    
+public class Tomato extends DisappearingBullet {
 
 
-    public PlayerBasicBullet(double x, double y, double velocityX, double velocityY, 
+    /*(double x, double y, double velocityX, double velocityY, double maxVelocity,
+    double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
+    int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 
+    Room presentRoom, Shape hitBoxShape, String imagePath, int bulletInterval,
+    double accuracy, String name, double disappearDistance) */
+    public Tomato(double x, double y, double velocityX, double velocityY, 
     Room presentRoom) {
-        super(x,y, velocityX, velocityY, 10, 0, 0, 1,  
-        6, 6, 0, 1, 1, false, 
-        presentRoom, new Ellipse2D.Double(x - 3, y - 3, 6, 6), "PlayerBasicBullet.png",
-        2, 0.05, "Peashooter", 350);
+        super(x,y, velocityX, velocityY, 20, 0, 0, 10,  
+        25, 25, 0, 2, 0.5, false, 
+        presentRoom, new Ellipse2D.Double(x - 12.5, y - 12.5, 25, 25), "Tomato_Launcher.png",
+        50, 0, "Tomato Launcher", 1000);
     }
 
     /*
@@ -138,25 +142,24 @@ public class PlayerBasicBullet extends DisappearingBullet {
     */
     public void bulletDisappear() {
         presentRoom.getBulletList().remove(this);
+        presentRoom.getExplosionList().add(new Explosion(
+            (points[0][0] + points[3][0])/2, (points[0][1] + points[3][1])/2,
+        75, 30, 10, false, presentRoom));
     }
-
+    
     /**
-    * damagePlayer
-    * damages the player
-    * @param player - the player to damage
+    * damageEntity
+    * damages an entity
+    * @param entity - the entity to damage
     */
     public void damageEntity(Entity entity) {
         entity.takeDamage(this);
-        if (pierceCount > 0) {
-            pierceCount--;
-        } else {
-            bulletDisappear();
-        }
+        bulletDisappear();
     }
     
 
-    public PlayerBasicBullet returnSelf(double x, double y, double velocityX, double velocityY) {
-        return new PlayerBasicBullet(x, y, velocityX, velocityY, presentRoom);
+    public Tomato returnSelf(double x, double y, double velocityX, double velocityY) {
+        return new Tomato(x, y, velocityX, velocityY, presentRoom);
     }
 
 }

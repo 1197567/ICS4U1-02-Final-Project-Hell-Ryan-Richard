@@ -15,7 +15,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
-import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 import java.awt.Font;
 import java.awt.Color;
@@ -41,14 +41,15 @@ public abstract class Room extends JPanel {
   private double y;
   private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
   protected ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
-  private boolean add = true;
-  private Player player;
+  private ArrayList<Explosion> explosionList = new ArrayList<Explosion>();
+  protected Player player;
   private BufferedImage candyFloor;
   private BufferedImage candyWall;
   private BufferedImage candyDoorClosed;
   private BufferedImage candyDoorOpen;
-  private JTextField textFieldHealth;
-  private JTextField textFieldWeapon;
+  private JLabel textFieldHealth;
+  private JLabel textFieldPrimaryWeapon;
+  private JLabel textFieldSecondaryWeapon;
   
   public Room(double x, double y, int horizontalDimension, int verticalDimension, Player player) {
     //temporary variable placeholders;
@@ -62,14 +63,17 @@ public abstract class Room extends JPanel {
     this.y = y;
     this.player = player;
     this.setLayout(null);
-    textFieldHealth = new JTextField("Health");
+    textFieldHealth = new JLabel("Health");
     textFieldHealth.setFont(displayFont);
     textFieldHealth.setBounds(0,0,75,25);
-    textFieldWeapon = new JTextField("Weapon: ");
-    textFieldWeapon.setFont(displayFont);
-    textFieldWeapon.setBounds(0,50,200,30);
+    textFieldPrimaryWeapon = new JLabel("Primary Weapon: ");
+    textFieldPrimaryWeapon.setFont(displayFont);
+    textFieldPrimaryWeapon.setBounds(0,50,300,30);
+    textFieldSecondaryWeapon = new JLabel("Secondary Weapon: ");
+    textFieldSecondaryWeapon.setBounds(0,80, 300, 30);
     this.add(textFieldHealth);
-    this.add(textFieldWeapon);
+    this.add(textFieldPrimaryWeapon);
+    this.add(textFieldSecondaryWeapon);
     
     try{
       candyFloor = ImageIO.read(new File("Resources/Candy-Floor_Tile.png"));
@@ -126,6 +130,13 @@ public abstract class Room extends JPanel {
       enemyList.get(i).draw(x,y,g);
     }
     player.draw(g);
+    drawHealthBar(g);
+    for (int i = 0; i < explosionList.size(); i++) {
+      explosionList.get(i).draw(x, y, g);
+    }
+  }
+  
+  protected void drawHealthBar(Graphics g) {
     g.setColor(Color.RED);
     g.fillRect(0,25, 200, 25);
     g.setColor(Color.GREEN);
@@ -144,7 +155,7 @@ public abstract class Room extends JPanel {
         if (roomFilling[i][j] == 0) {
           g.drawImage(candyFloor, (int) (x + i*50), (int) (y + j*50), null);
         } else if (roomFilling[i][j] == 1){
-          g.drawRect((int)(i*50), (int) (j*50), 50, 50);
+          //g.drawRect((int)(i*50), (int) (j*50), 50, 50);
           g.drawImage(candyWall,(int) (x + i*50), (int) (y + j*50), null);
         } else if (roomFilling[i][j] == 2){
           g.drawImage(candyDoorClosed,(int) (x + i*50), (int) (y + j*50), null);
@@ -168,7 +179,7 @@ public abstract class Room extends JPanel {
         }
       } else {
         for (int j = 0; j < enemyList.size(); j++) {
-          if ((enemyList.get(j).getAlive()) && 
+          if ((enemyList.get(j).getAlive()) && (j < enemyList.size()) && (i < bulletList.size()) &&
           (bulletList.get(i).getHitBox().intersects(enemyList.get(j).getHitBox()))){
             bulletList.get(i).damageEntity(enemyList.get(j));
           }
@@ -181,14 +192,6 @@ public abstract class Room extends JPanel {
         bulletCollision(bulletList.get(i));
       }
       //moves all the bullets in the bulletList arrayList
-    }
-    //testing by adding bullets
-    if (add) {
-      for (int i = 0; i < 1; i++) {
-        bulletList.add(new TestSquareBullet(bulletList));
-        bulletList.add(new TestBullet(bulletList));
-      }
-      add = false;
     }
     player.move();
     player.shootingBullet();
@@ -226,7 +229,12 @@ public abstract class Room extends JPanel {
         player.takeDamage(enemyList.get(i).getMeleeDamage());
       }
       enemyList.get(i).move();
-      enemyList.get(i).shootingBullet();
+      if (i < enemyList.size()) {
+        enemyList.get(i).shootingBullet();
+      }
+    }
+    for (int i = 0; i < explosionList.size(); i++) {
+      explosionList.get(i).runExplosion();
     }
   }
   
@@ -358,8 +366,18 @@ public abstract class Room extends JPanel {
     verticalPosition*50, 50,50);
   }
   
-  public void setWeapon(Bullet bullet) {
-    textFieldWeapon.setText("Weapon: " + bullet.getName());
+  public void setPrimaryWeapon(Bullet bullet) {
+    textFieldPrimaryWeapon.setText("Primary Weapon: " + bullet.getName());
+  }
+  
+  public void setSecondaryWeapon(Bullet bullet) {
+    textFieldSecondaryWeapon.setText("Secondary Weapon: " + bullet.getName());
+  }
+  
+  public void switchWeapons() {
+    String tempText = textFieldPrimaryWeapon.getText();
+    textFieldPrimaryWeapon.setText(textFieldSecondaryWeapon.getText());
+    textFieldSecondaryWeapon.setText(tempText);
   }
   
   public Player getPlayer() {
@@ -374,12 +392,12 @@ public abstract class Room extends JPanel {
     return bulletList;
   }
   
-  public void setBulletList(ArrayList<Bullet> bulletList) {
-    this.bulletList = bulletList;
-  }
-  
   public ArrayList<Enemy> getEnemyList() {
     return enemyList;
+  }
+  
+  public ArrayList<Explosion> getExplosionList() {
+    return explosionList;
   }
   
   public void addX(double additionX) {

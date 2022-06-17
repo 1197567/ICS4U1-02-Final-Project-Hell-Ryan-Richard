@@ -7,7 +7,6 @@
 */
 
 //import statements
-import java.util.ArrayList; 
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.AffineTransform;
@@ -34,11 +33,11 @@ public class TestBullet extends Bullet{
     * @param hitBoxShape - the shape of the hit box, related to collision
     * @param rotationRadian - the amount the bullet is rotated in radians from (0,1) clockwise
     */
-    public TestBullet(ArrayList<Bullet> bulletList) {
+    public TestBullet(Room presentRoom) {
         super(150, 100, 0, 0, 5, 0, 
         0, 0, 20, 20, 0, 
         999, 1, false, 
-        bulletList, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png", 
+        presentRoom, new Ellipse2D.Double(140, 90, 20, 20), "TestBulletImage.png", 
         0, 0, "CircleTestBullet");
     }
 
@@ -159,7 +158,7 @@ public class TestBullet extends Bullet{
     * responsible for what happens when the bullet disappears or "dies"
     */
     public void bulletDisappear() {
-        bulletList.remove(this);
+        presentRoom.getBulletList().remove(this);
     }
 
     /**
@@ -181,7 +180,7 @@ public class TestBullet extends Bullet{
     * responsible for what happens when the bullet disappears or "dies"
     */
     public TestBullet returnSelf(double x, double y, double velocityX, double velocityY) {
-        return new TestBullet(bulletList);
+        return new TestBullet(presentRoom);
     }
     
 }

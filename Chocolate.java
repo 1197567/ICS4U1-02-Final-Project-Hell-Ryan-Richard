@@ -19,7 +19,17 @@ public class Chocolate extends Enemy{
   public void fireBullet() {
     double aimAngle = -Math.atan2(presentRoom.getPlayer().getHitBox().getCenterX() - x, 
     presentRoom.getPlayer().getHitBox().getCenterY() - y) + Math.PI/2;
-    presentRoom.getBulletList().add(new ChocolateBullet(x + 10, y + 10,
-    Math.cos(aimAngle)*1.5, Math.sin(aimAngle)*1.5, presentRoom.getBulletList()));
+    presentRoom.getBulletList().add(new ChocolateBullet(x + 10, y + 15,
+    Math.cos(aimAngle)*1.5, Math.sin(aimAngle)*1.5, presentRoom));
+  }
+
+  @Override
+  public void move() {
+    x += velocityX;
+    y += velocityY;
+    hitBox.setLocation((int) x, (int) y);
+    if (!hasWallCollision) {
+      //System.out.println("MOVING");
+    }
   }
 }

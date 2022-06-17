@@ -28,9 +28,10 @@ public abstract class Enemy implements Entity{
   private int bulletTimer = 0;
   private int bulletInterval;
   private int deathTimer = 27;
-  private boolean alive = true;
+  protected boolean alive = true;
   protected Room presentRoom;
   private double meleeDamage;
+  protected boolean hasWallCollision = true;
   
   
   /*Constructer*/
@@ -56,12 +57,12 @@ public abstract class Enemy implements Entity{
   }
   
   public void move() {
-
+    
     x += velocityX;
     y += velocityY;
     hitBox.setLocation((int) x, (int) y);
   }
-
+  
   public void shootingBullet() {
     if (bulletTimer <= 0) {
       bulletTimer = bulletInterval;
@@ -72,27 +73,29 @@ public abstract class Enemy implements Entity{
   }
   
   public void wallCollision (Rectangle rectangleHitBox) {
-    boolean collidedX = false;
-    boolean collidedY = false;
-    x -= velocityX;
-    hitBox.setLocation((int) x,(int) y);
-    if (!collidingWithRectangle(rectangleHitBox)) {
-      collidedX = true;
+    if (hasWallCollision) {
+      boolean collidedX = false;
+      boolean collidedY = false;
+      x -= velocityX;
+      hitBox.setLocation((int) x,(int) y);
+      if (!collidingWithRectangle(rectangleHitBox)) {
+        collidedX = true;
+      }
+      x += velocityX;
+      y -= velocityY;
+      hitBox.setLocation((int) x,(int) y);
+      if (!collidingWithRectangle(rectangleHitBox)) {
+        collidedY = true;
+      }
+      y += velocityY;
+      if (collidedX) {
+        velocityX = -velocityX;
+      }
+      if (collidedY) {
+        velocityY = -velocityY;
+      }
+      hitBox.setLocation((int) x,(int) y);
     }
-    x += velocityX;
-    y -= velocityY;
-    hitBox.setLocation((int) x,(int) y);
-    if (!collidingWithRectangle(rectangleHitBox)) {
-      collidedY = true;
-    }
-    y += velocityY;
-    if (collidedX) {
-      velocityX = -velocityX;
-    }
-    if (collidedY) {
-      velocityY = -velocityY;
-    }
-    hitBox.setLocation((int) x,(int) y);
   }
   
   public boolean collidingWithRectangle(Rectangle rectangleHitBox) {
@@ -108,6 +111,7 @@ public abstract class Enemy implements Entity{
   /*Setters and Getters*/
   public void setX(double x){
     this.x=x;
+    hitBox.setLocation((int) x, (int) y);
   }
   
   public double getX(){
@@ -116,10 +120,27 @@ public abstract class Enemy implements Entity{
   
   public void setY(double y){
     this.y=y;
+    hitBox.setLocation((int) x, (int) y);
   }
   
   public double getY(){
     return y;
+  }
+
+  public void setVelocityX(double velocityX){
+    this.velocityX=velocityX;
+  }
+  
+  public double getVelocityX(){
+    return velocityX;
+  }
+
+  public void setVelocityY(double velocityY){
+    this.velocityY = velocityY;
+  }
+  
+  public double getVelocityY(){
+    return velocityY;
   }
   
   public void setName(String name){
@@ -145,17 +166,24 @@ public abstract class Enemy implements Entity{
   public boolean getAlive(){
     return alive;
   }
-
+  
   public Rectangle getHitBox(){
     return hitBox;
   }
-
+  
   public void setMeleeDamage(double meleeDamage) {
     this.meleeDamage =
-     meleeDamage;
+    meleeDamage;
   }
   public double getMeleeDamage() {
     return meleeDamage;
+  }
+
+  public void setHasWallCollision(boolean hasWallCollision) {
+    this.hasWallCollision = hasWallCollision;
+  }
+  public boolean getWallCollision() {
+    return hasWallCollision;
   }
   
   /*Methods*/
@@ -177,12 +205,27 @@ public abstract class Enemy implements Entity{
   
   public void takeDamage(Bullet bullet){
     health -= bullet.getDamage();
-    if (health <= 0) {
-      alive = false;
-      double deathAngle = Math.atan2(bullet.getVelocityY(), bullet.getVelocityX());
-      velocityX = Math.cos(deathAngle);
-      velocityY = Math.sin(deathAngle);
-      presentRoom.getPlayer().kill();
+    if (bullet.getDamage() > 0) {
+      if (health <= 0) {
+        alive = false;
+        double deathAngle = Math.atan2(bullet.getVelocityY(), bullet.getVelocityX());
+        velocityX = Math.cos(deathAngle);
+        velocityY = Math.sin(deathAngle);
+        presentRoom.getPlayer().kill();
+      }
+    }
+  }
+  
+  public void takeDamage(double damage){
+    health -= damage;
+    if (damage > 0) {
+      if (health <= 0) {
+        alive = false;
+        double deathAngle = Math.atan2(velocityY, velocityX);
+        velocityX = Math.cos(deathAngle);
+        velocityY = Math.sin(deathAngle);
+        presentRoom.getPlayer().kill();
+      }
     }
   }
 }

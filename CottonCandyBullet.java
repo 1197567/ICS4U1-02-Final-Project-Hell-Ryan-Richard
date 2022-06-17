@@ -5,23 +5,28 @@
 * @version 1.0
 * June 2022
 */
- 
+
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.AffineTransform;
 
-public class PlayerBasicBullet extends DisappearingBullet {
+public class CottonCandyBullet extends DisappearingBullet {
     
-
-
-    public PlayerBasicBullet(double x, double y, double velocityX, double velocityY, 
+    
+    /*(double x, double y, double velocityX, double velocityY, double maxVelocity,
+    double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
+    int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 
+    ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath, int bulletInterval,
+    double accuracy, String name) */
+    public CottonCandyBullet(double x, double y, double velocityX, double velocityY, 
     Room presentRoom) {
-        super(x,y, velocityX, velocityY, 10, 0, 0, 1,  
-        6, 6, 0, 1, 1, false, 
-        presentRoom, new Ellipse2D.Double(x - 3, y - 3, 6, 6), "PlayerBasicBullet.png",
-        2, 0.05, "Peashooter", 350);
+        super(x,y, velocityX, velocityY, 4, 0, 0, 3, 
+         10, 10, 0, 0, 0, true, 
+        presentRoom, new Ellipse2D.Double((int) (x - 5),(int) (y - 5), 10, 10), 
+        "Cotton_Candy_Enemy_Bullet.png",
+        1, 0, "CottonCandy", 300);
     }
-
+    
     /*
     * collisionWithWall
     * method responsible for detecting collision between this bullet and a wall 
@@ -139,7 +144,7 @@ public class PlayerBasicBullet extends DisappearingBullet {
     public void bulletDisappear() {
         presentRoom.getBulletList().remove(this);
     }
-
+    
     /**
     * damagePlayer
     * damages the player
@@ -154,9 +159,9 @@ public class PlayerBasicBullet extends DisappearingBullet {
         }
     }
     
-
+    
     public PlayerBasicBullet returnSelf(double x, double y, double velocityX, double velocityY) {
         return new PlayerBasicBullet(x, y, velocityX, velocityY, presentRoom);
     }
-
+    
 }
