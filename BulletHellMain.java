@@ -13,6 +13,10 @@ import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.BorderLayout;
 import javax.swing.JTextField;
+import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class BulletHellMain{
     
@@ -26,8 +30,8 @@ public class BulletHellMain{
     public static void main(String[] args){
         
         gameWindow = new JFrame("Bullet_Hell"); //create JFrame
-        Player player = new Player(400 - 13.5, 300 - 17.5, 100,6, 6);
-        room = new BasicRoom(0,0, player); 
+        Player player = new Player(400 - 13.5, 300 - 17.5, 100,15, 15);
+        room = new BossRoom(0,0, player); 
         player.setPresentRoom(room);
 
         gameWindow.add(room);
@@ -71,10 +75,29 @@ public class BulletHellMain{
 
     public static void characterDeath() {
         JPanel deathPanel = new JPanel();
+        deathPanel.setLayout(new BorderLayout());
+        Font deathFont = new Font("Comic Sans MS", Font.PLAIN, 40);
+        JTextField deathText = new JTextField("GAME OVER");
+        JButton tryAgainButton = new JButton("Try Again");
+        tryAgainButton.addActionListener(new ActionListener(){  
+            public void actionPerformed(ActionEvent e){  
+                    Player player = new Player(400 - 13.5, 300 - 17.5, 100,6, 6);
+                    room = new BossRoom(0,0, player); 
+                    player.setPresentRoom(room);
+                    gameWindow.add(room);
+                    gameWindow.remove(deathPanel);
+                    gameWindow.pack();
+                    room.requestFocusInWindow();
+                    }  
+                });  
+        deathText.setHorizontalAlignment(JTextField.CENTER);
+        deathText.setFont(deathFont);
         deathPanel.setBackground(Color.WHITE);
         gameWindow.remove(room);
         gameWindow.add(deathPanel);
-        deathPanel.add(new JTextField("GAME OVER"), BorderLayout.SOUTH);
+        deathPanel.add(tryAgainButton, BorderLayout.PAGE_END);
+        deathPanel.add(deathText, BorderLayout.CENTER);
         deathPanel.setVisible(true);
+        gameWindow.pack();
     }
 }

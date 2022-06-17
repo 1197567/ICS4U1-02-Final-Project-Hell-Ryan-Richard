@@ -7,7 +7,6 @@
 */
 
 //import statements
-import java.util.ArrayList; 
 import java.awt.Shape;
 
 public abstract class DisappearingBullet extends Bullet{
@@ -44,12 +43,12 @@ public abstract class DisappearingBullet extends Bullet{
     public DisappearingBullet(double x, double y, double velocityX, double velocityY, double maxVelocity,
     double accelerationX, double accelerationY, double damage, double sizeX, double sizeY, 
     int pierceCount, int bounceCount, double bounceModifier, boolean hostileToPlayer, 
-    ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath, int bulletInterval,
+    Room presentRoom, Shape hitBoxShape, String imagePath, int bulletInterval,
     double accuracy, String name, double disappearDistance) {
         super(x, y, velocityX, velocityY, maxVelocity,
         accelerationX, accelerationY, damage, sizeX, sizeY, 
         pierceCount, bounceCount, bounceModifier, hostileToPlayer, 
-        bulletList, hitBoxShape, imagePath, bulletInterval,
+        presentRoom, hitBoxShape, imagePath, bulletInterval,
         accuracy, name);
         this.disappearDistance = disappearDistance;
     }

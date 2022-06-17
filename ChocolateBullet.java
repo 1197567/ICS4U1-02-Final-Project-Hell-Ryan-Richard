@@ -6,11 +6,11 @@
 * June 2022
 */
 
-import java.util.ArrayList; 
+
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
-public class ChocolateBullet extends Bullet {
+public class ChocolateBullet extends DisappearingBullet {
     
     
     /*(double x, double y, double velocityX, double velocityY, double maxVelocity,
@@ -19,11 +19,11 @@ public class ChocolateBullet extends Bullet {
     ArrayList<Bullet> bulletList, Shape hitBoxShape, String imagePath, int bulletInterval,
     double accuracy, String name) */
     public ChocolateBullet(double x, double y, double velocityX, double velocityY, 
-    ArrayList<Bullet> bulletList) {
+    Room presentRoom) {
         super(x,y, velocityX, velocityY, 1.5, 0, 0, 1, 
          22, 22, 0, 0, 0, true, 
-        bulletList, new Rectangle((int) (x - 11),(int) (y - 11), 22, 22), "PlayerBasicBullet.png",
-        15, 0.1, "Peashooter");
+        presentRoom, new Rectangle((int) (x - 11),(int) (y - 11), 22, 22), "PlayerBasicBullet.png",
+        15, 0.1, "Peashooter", 200);
     }
     
     /*
@@ -141,7 +141,7 @@ public class ChocolateBullet extends Bullet {
     * responsible for what happens when the bullet disappears or "dies"
     */
     public void bulletDisappear() {
-        bulletList.remove(this);
+        presentRoom.getBulletList().remove(this);
     }
     
     /**
@@ -160,7 +160,7 @@ public class ChocolateBullet extends Bullet {
     
     
     public PlayerBasicBullet returnSelf(double x, double y, double velocityX, double velocityY) {
-        return new PlayerBasicBullet(x, y, velocityX, velocityY, bulletList);
+        return new PlayerBasicBullet(x, y, velocityX, velocityY, presentRoom);
     }
     
 }
