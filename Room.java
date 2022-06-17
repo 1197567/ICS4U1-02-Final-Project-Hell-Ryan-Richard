@@ -67,7 +67,7 @@ public abstract class Room extends JPanel {
     textFieldHealth.setBounds(0,0,75,25);
     textFieldPrimaryWeapon = new JLabel("Primary Weapon: ");
     textFieldPrimaryWeapon.setFont(displayFont);
-    textFieldPrimaryWeapon.setBounds(0,50,300,30);
+    textFieldPrimaryWeapon.setBounds(0,50,600,30);
     textFieldSecondaryWeapon = new JLabel("Secondary Weapon: ");
     textFieldSecondaryWeapon.setBounds(0,80, 300, 30);
     this.add(textFieldHealth);
